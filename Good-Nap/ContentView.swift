@@ -7,7 +7,8 @@
 
 import SwiftUI
 
-// Mock environment objects for standalone testing
+// MARK: - Mock environment objects for standalone testing
+
 class MockHealthKitManager: ObservableObject {
     @Published var isAuthorized = false
 }
@@ -21,7 +22,56 @@ class MockHomeViewModel: ObservableObject {
     @Published var isNapping = false
 }
 
-enum AppView {
+// MARK: - Minimal ML stubs to make this file compile standalone
+
+@MainActor
+final class MLModelService: ObservableObject {
+    static let shared = MLModelService()
+
+    @Published var isModelTrained: Bool = false
+
+    func initializeMLModels() {
+        // No-op stub for standalone build.
+        // In your app, kick off model loading/training here.
+    }
+}
+
+struct MLTrainingView: View {
+    @EnvironmentObject var mlModelService: MLModelService
+
+    var body: some View {
+        VStack(spacing: 20) {
+            Image(systemName: "brain.head.profile")
+                .font(.system(size: 64))
+            Text("Training your sleep model…")
+                .font(.title3.weight(.semibold))
+            Text("This is a placeholder training screen so the sample compiles.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+
+            Button {
+                // Simulate training completion
+                mlModelService.isModelTrained = true
+            } label: {
+                Text("Finish Training")
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .padding(.vertical, 12)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.accentColor, in: Capsule())
+            }
+            .padding(.horizontal, 24)
+        }
+        .padding()
+        .navigationTitle("Model Training")
+    }
+}
+
+// MARK: - App Views
+
+enum AppView: Hashable {
     case home
     case history
     case analytics
@@ -33,9 +83,10 @@ struct ContentView: View {
     @StateObject private var watchConnectivityManager = MockWatchConnectivityManager()
     @StateObject private var homeViewModel = MockHomeViewModel()
     @StateObject private var mlModelService = MLModelService.shared
+
     @State private var currentView: AppView = .home
     @State private var showMLTraining = true
-    
+
     var body: some View {
         NavigationStack {
             if showMLTraining && !mlModelService.isModelTrained {
@@ -56,21 +107,21 @@ struct ContentView: View {
                             Text("Home")
                         }
                         .tag(AppView.home)
-                    
+
                     HistoryTab()
                         .tabItem {
                             Image(systemName: "clock.fill")
                             Text("History")
                         }
                         .tag(AppView.history)
-                    
+
                     AnalyticsTab()
                         .tabItem {
                             Image(systemName: "waveform.path.ecg")
                             Text("Analytics")
                         }
                         .tag(AppView.analytics)
-                    
+
                     SettingsTab()
                         .tabItem {
                             Image(systemName: "gear")
@@ -1113,27 +1164,27 @@ struct MetricTile: View {
 struct SettingsTab: View {
     @EnvironmentObject var healthKitManager: MockHealthKitManager
     @EnvironmentObject var watchConnectivityManager: MockWatchConnectivityManager
-    
+
     var body: some View {
         VStack(spacing: 20) {
             Text("Settings")
                 .font(.largeTitle)
                 .fontWeight(.bold)
-            
+
             VStack(spacing: 16) {
                 SettingRow(
                     title: "HealthKit",
                     status: healthKitManager.isAuthorized ? "Authorized" : "Not Authorized",
                     statusColor: healthKitManager.isAuthorized ? .green : .red
                 )
-                
+
                 SettingRow(
                     title: "Apple Watch",
                     status: watchConnectivityManager.isConnected ? "Connected" : "Not Connected",
                     statusColor: watchConnectivityManager.isConnected ? .green : .red
                 )
             }
-            
+
             Spacer()
         }
         .padding()
