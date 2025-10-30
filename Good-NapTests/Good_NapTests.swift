@@ -5,12 +5,16 @@
 //  Created by AI Club on 10/22/25.
 //
 
-import Testing
+import XCTest
+@testable import Good_Nap
 
-struct Good_NapTests {
+final class Good_NapTests: XCTestCase {
 
-    @Test func example() async throws {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+    func testTrainingDataGeneratorProducesSessions() {
+        let sessions = TrainingDataGenerator.generateTrainingData(count: 5)
+
+        XCTAssertEqual(sessions.count, 5, "Expected generator to produce requested number of sessions")
+        XCTAssertTrue(sessions.allSatisfy { !$0.biometricData.isEmpty }, "Sessions should include biometric samples")
+        XCTAssertTrue(sessions.allSatisfy { !$0.sleepStages.isEmpty }, "Sessions should include sleep stage records")
     }
-
 }
