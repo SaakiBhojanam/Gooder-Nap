@@ -34,10 +34,10 @@ NapSync is an iOS + watchOS companion app that uses biometric data from Apple Wa
 
 ## Development Setup
 
-1. **Open Project**: Use `NapSync.xcworkspace` in Xcode
-2. **Configure Teams**: Set development teams for iOS and watchOS targets
-3. **Add Entitlements**: HealthKit and WatchConnectivity capabilities
-4. **Test on Device**: Apple Watch required for full functionality
+1. **Open Project**: Open `Good-Nap.xcodeproj` in Xcode 16.0 or newer
+2. **Configure Signing**: Set your development team for the *Good-Nap*, *Good-NapTests*, and *Good-NapUITests* targets if you plan to run on device
+3. **Run the App**: Select an iOS simulator (iPhone 15 or later recommended) and press **Run** to launch the SwiftUI application
+4. **Train the Model**: On first launch the ML training screen appears; allow it to complete to experience the full UI flow
 
 ## Architecture Highlights
 

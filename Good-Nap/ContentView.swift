@@ -22,7 +22,10 @@ class MockHomeViewModel: ObservableObject {
 }
 
 enum AppView {
-    case home, history, insights, settings
+    case home
+    case history
+    case insights
+    case settings
 }
 
 struct ContentView: View {
@@ -262,7 +265,7 @@ struct SettingRow: View {
     let title: String
     let status: String
     let statusColor: Color
-    
+
     var body: some View {
         HStack {
             Text(title)
@@ -277,21 +280,7 @@ struct SettingRow: View {
         .cornerRadius(12)
     }
 }
-}
-
-enum AppView {
-    case home
-    case napMonitoring
-    case summary
-}
-
-extension Notification.Name {
-    static let napSessionEnded = Notification.Name("napSessionEnded")
-    static let returnToHome = Notification.Name("returnToHome")
-}
 
 #Preview {
     ContentView()
-        .environmentObject(HealthKitManager())
-        .environmentObject(WatchConnectivityManager())
 }
