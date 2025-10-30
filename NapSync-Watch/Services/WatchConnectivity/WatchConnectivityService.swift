@@ -6,10 +6,12 @@ import NapSyncShared
 @MainActor
 class WatchConnectivityService: NSObject, ObservableObject {
     @Published var isConnected: Bool = false
+    @Published var isReachable: Bool = false
     @Published var receivedStartCommand: NapSession?
     @Published var receivedStopCommand: Bool = false
-    
+
     private var session: WCSession?
+    private var hasSentReadyMessage = false
     
     override init() {
         super.init()
@@ -42,15 +44,43 @@ class WatchConnectivityService: NSObject, ObservableObject {
             print("Failed to send message to iPhone: \(error)")
         }
     }
+
+    func notifyCompanionReady() {
+        guard let session = session, session.isReachable else { return }
+        guard !hasSentReadyMessage else { return }
+
+        hasSentReadyMessage = true
+
+        Task {
+            await sendMessage(["command": "watchReady"])
+        }
+    }
 }
 
 extension WatchConnectivityService: WCSessionDelegate {
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
         DispatchQueue.main.async {
             self.isConnected = activationState == .activated
+            self.isReachable = session.isReachable
+
+            if session.isReachable {
+                self.notifyCompanionReady()
+            }
         }
     }
-    
+
+    func sessionReachabilityDidChange(_ session: WCSession) {
+        DispatchQueue.main.async {
+            self.isReachable = session.isReachable
+
+            if session.isReachable {
+                self.notifyCompanionReady()
+            } else {
+                self.hasSentReadyMessage = false
+            }
+        }
+    }
+
     func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
         DispatchQueue.main.async {
             self.handleReceivedMessage(message, replyHandler: replyHandler)

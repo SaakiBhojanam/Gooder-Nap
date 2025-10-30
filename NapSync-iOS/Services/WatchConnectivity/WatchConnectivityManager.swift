@@ -127,6 +127,8 @@ class WatchMessageHandler {
             handleSleepStageUpdate(message, replyHandler: replyHandler)
         case "wakeRequest":
             handleWakeRequest(message, replyHandler: replyHandler)
+        case "watchReady":
+            handleWatchReady(replyHandler: replyHandler)
         default:
             replyHandler(["error": "Unknown command"])
         }
@@ -148,6 +150,11 @@ class WatchMessageHandler {
         // Handle wake request from watch
         NotificationCenter.default.post(name: .wakeRequestReceived, object: message)
         replyHandler(["status": "received"])
+    }
+
+    private func handleWatchReady(replyHandler: @escaping ([String: Any]) -> Void) {
+        NotificationCenter.default.post(name: .watchBecameReady, object: nil)
+        replyHandler(["status": "acknowledged"])
     }
 }
 
@@ -172,4 +179,5 @@ extension Notification.Name {
     static let biometricDataReceived = Notification.Name("biometricDataReceived")
     static let sleepStageUpdated = Notification.Name("sleepStageUpdated")
     static let wakeRequestReceived = Notification.Name("wakeRequestReceived")
+    static let watchBecameReady = Notification.Name("watchBecameReady")
 }
