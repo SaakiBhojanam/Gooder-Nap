@@ -107,10 +107,10 @@ public class TrainingDataGenerator {
         var stages: [SleepStage] = []
         
         // Typical nap progression
-        let awakeDuration = Int(totalDataPoints * 0.1) // 10% awake at start
-        let lightSleepDuration = Int(totalDataPoints * 0.4) // 40% light sleep
-        let deepSleepDuration = Int(totalDataPoints * 0.3) // 30% deep sleep
-        let remDuration = Int(totalDataPoints * 0.15) // 15% REM sleep
+        let awakeDuration = Int(Double(totalDataPoints) * 0.1) // 10% awake at start
+        let lightSleepDuration = Int(Double(totalDataPoints) * 0.4) // 40% light sleep
+        let deepSleepDuration = Int(Double(totalDataPoints) * 0.3) // 30% deep sleep
+        let remDuration = Int(Double(totalDataPoints) * 0.15) // 15% REM sleep
         let finalAwakeDuration = totalDataPoints - awakeDuration - lightSleepDuration - deepSleepDuration - remDuration
         
         // Add stages with some randomness

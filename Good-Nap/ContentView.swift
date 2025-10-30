@@ -121,7 +121,7 @@ struct HomeTab: View {
                     .accentColor(.blue)
             }
             .padding()
-            .background(Color(.systemGray6))
+            .background(Color.gray.opacity(0.15))
             .cornerRadius(12)
             
             Button(action: {
@@ -225,7 +225,7 @@ struct InsightCard: View {
                 .frame(width: 12, height: 12)
         }
         .padding()
-        .background(Color(.systemGray6))
+        .background(Color.gray.opacity(0.15))
         .cornerRadius(12)
     }
 }
@@ -276,7 +276,7 @@ struct SettingRow: View {
                 .foregroundColor(statusColor)
         }
         .padding()
-        .background(Color(.systemGray6))
+        .background(Color.gray.opacity(0.15))
         .cornerRadius(12)
     }
 }

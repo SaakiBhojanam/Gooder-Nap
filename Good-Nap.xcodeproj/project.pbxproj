@@ -1,652 +1,1047 @@
 // !$*UTF8*$!
 {
-archiveVersion = 1;
-classes = {
-};
-objectVersion = 77;
-objects = {
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 60;
+	objects = {
 
 /* Begin PBXBuildFile section */
-173D8F479E524484889A2417F35EBA2F /* Good_NapApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E61B7701F51E44F7B71E6FF566A24F66 /* Good_NapApp.swift */; };
-4EF67EB2BABB418EAD62FDD56292C9C5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F926600FA798419583D6CE0385381D44 /* ContentView.swift */; };
-F9B719188FD04D778B37907A631B3CAC /* MLModelService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B1483CD7BCA4B968D370381F0A11FE1 /* MLModelService.swift */; };
-1C14F2EA07CC4424AC53BA1EEE5F6FD8 /* TrainingDataGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7129B2894344167AAF47734ADE60DFC /* TrainingDataGenerator.swift */; };
-4DCC93FF7DD94218960B349F6D9B31E4 /* BiometricData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B91E4EA5E3F4EAA89385363399E8644 /* BiometricData.swift */; };
-36FEDC82016C41AA9152FF5D29C81347 /* NapSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 386A8350AD764BB3856B8351EC2D2591 /* NapSession.swift */; };
-80F55CBB987443B687D4D4D0492E111A /* SleepStage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C52C836D964A5B8F7872A96A4030B9 /* SleepStage.swift */; };
-9F04CEF9766E422DA20D2B12F4ED9278 /* MLTrainingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CC80BC068E40678B3A9D07FA8337C6 /* MLTrainingView.swift */; };
-1B2E791044E2408BB10B98D5FB7FD167 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FD59A32AEE764B66829FDC8A0704AA8B /* Assets.xcassets */; };
-0356276DC381470FAE0B6B724EF2F3D9 /* Good_NapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D0B345570B445A80F71803C1995143 /* Good_NapTests.swift */; };
-C8C4E17F05F04018BC4C30FCF3EF6DA0 /* Good_NapUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA3496B2067540E087B5A4F71CA88761 /* Good_NapUITests.swift */; };
-AF58404B1DC44F1D97CAD865F19BE07F /* Good_NapUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C9BB433B5EB471D95E1A2BEA244C3C3 /* Good_NapUITestsLaunchTests.swift */; };
+		0356276DC381470FAE0B6B724EF2F3D9 /* Good_NapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D0B345570B445A80F71803C1995143 /* Good_NapTests.swift */; };
+		173D8F479E524484889A2417F35EBA2F /* Good_NapApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E61B7701F51E44F7B71E6FF566A24F66 /* Good_NapApp.swift */; };
+		1B2E791044E2408BB10B98D5FB7FD167 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FD59A32AEE764B66829FDC8A0704AA8B /* Assets.xcassets */; };
+		1C14F2EA07CC4424AC53BA1EEE5F6FD8 /* TrainingDataGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7129B2894344167AAF47734ADE60DFC /* TrainingDataGenerator.swift */; };
+		36FEDC82016C41AA9152FF5D29C81347 /* NapSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 386A8350AD764BB3856B8351EC2D2591 /* NapSession.swift */; };
+		4DCC93FF7DD94218960B349F6D9B31E4 /* BiometricData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B91E4EA5E3F4EAA89385363399E8644 /* BiometricData.swift */; };
+		4EF67EB2BABB418EAD62FDD56292C9C5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F926600FA798419583D6CE0385381D44 /* ContentView.swift */; };
+		51F6BCB02EB3453500193743 /* Good-Nap Watch App Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 51F6BC902EB3453400193743 /* Good-Nap Watch App Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		80F55CBB987443B687D4D4D0492E111A /* SleepStage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C52C836D964A5B8F7872A96A4030B9 /* SleepStage.swift */; };
+		9F04CEF9766E422DA20D2B12F4ED9278 /* MLTrainingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CC80BC068E40678B3A9D07FA8337C6 /* MLTrainingView.swift */; };
+		AF58404B1DC44F1D97CAD865F19BE07F /* Good_NapUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C9BB433B5EB471D95E1A2BEA244C3C3 /* Good_NapUITestsLaunchTests.swift */; };
+		C8C4E17F05F04018BC4C30FCF3EF6DA0 /* Good_NapUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA3496B2067540E087B5A4F71CA88761 /* Good_NapUITests.swift */; };
+		F9B719188FD04D778B37907A631B3CAC /* MLModelService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B1483CD7BCA4B968D370381F0A11FE1 /* MLModelService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-37858DC729E04D62B60A850771365A28 /* PBXContainerItemProxy */ = {
-isa = PBXContainerItemProxy;
-containerPortal = 0B4E0F6B99CB45EF8B3CC20B8EB7B4F6 /* Project object */;
-proxyType = 1;
-remoteGlobalIDString = 92C9D19E0131431798E4A27D2FF74A9E;
-remoteInfo = "Good-Nap";
-};
-E7DA39DBF3914D00973D80704DAE25BC /* PBXContainerItemProxy */ = {
-isa = PBXContainerItemProxy;
-containerPortal = 0B4E0F6B99CB45EF8B3CC20B8EB7B4F6 /* Project object */;
-proxyType = 1;
-remoteGlobalIDString = 92C9D19E0131431798E4A27D2FF74A9E;
-remoteInfo = "Good-Nap";
-};
+		37858DC729E04D62B60A850771365A28 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0B4E0F6B99CB45EF8B3CC20B8EB7B4F6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 92C9D19E0131431798E4A27D2FF74A9E;
+			remoteInfo = "Good-Nap";
+		};
+		51F6BC9D2EB3453500193743 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0B4E0F6B99CB45EF8B3CC20B8EB7B4F6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 51F6BC8F2EB3453400193743;
+			remoteInfo = "Good-Nap Watch App Watch App";
+		};
+		51F6BCA72EB3453500193743 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0B4E0F6B99CB45EF8B3CC20B8EB7B4F6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 51F6BC8F2EB3453400193743;
+			remoteInfo = "Good-Nap Watch App Watch App";
+		};
+		51F6BCAE2EB3453500193743 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0B4E0F6B99CB45EF8B3CC20B8EB7B4F6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 51F6BC8F2EB3453400193743;
+			remoteInfo = "Good-Nap Watch App Watch App";
+		};
+		E7DA39DBF3914D00973D80704DAE25BC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0B4E0F6B99CB45EF8B3CC20B8EB7B4F6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 92C9D19E0131431798E4A27D2FF74A9E;
+			remoteInfo = "Good-Nap";
+		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		51F6BCB42EB3453500193743 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				51F6BCB02EB3453500193743 /* Good-Nap Watch App Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-E61B7701F51E44F7B71E6FF566A24F66 /* Good_NapApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Good_NapApp.swift; sourceTree = "<group>"; };
-F926600FA798419583D6CE0385381D44 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-8B1483CD7BCA4B968D370381F0A11FE1 /* MLModelService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLModelService.swift; sourceTree = "<group>"; };
-A7129B2894344167AAF47734ADE60DFC /* TrainingDataGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingDataGenerator.swift; sourceTree = "<group>"; };
-6B91E4EA5E3F4EAA89385363399E8644 /* BiometricData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricData.swift; sourceTree = "<group>"; };
-386A8350AD764BB3856B8351EC2D2591 /* NapSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NapSession.swift; sourceTree = "<group>"; };
-F8C52C836D964A5B8F7872A96A4030B9 /* SleepStage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepStage.swift; sourceTree = "<group>"; };
-C6CC80BC068E40678B3A9D07FA8337C6 /* MLTrainingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLTrainingView.swift; sourceTree = "<group>"; };
-FD59A32AEE764B66829FDC8A0704AA8B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-16AC4F64349D4A79A34AFD314142CBF5 /* Good_Nap.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Good_Nap.entitlements; sourceTree = "<group>"; };
-59D0B345570B445A80F71803C1995143 /* Good_NapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Good_NapTests.swift; sourceTree = "<group>"; };
-EA3496B2067540E087B5A4F71CA88761 /* Good_NapUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Good_NapUITests.swift; sourceTree = "<group>"; };
-5C9BB433B5EB471D95E1A2BEA244C3C3 /* Good_NapUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Good_NapUITestsLaunchTests.swift; sourceTree = "<group>"; };
-274A468ACB5F463EBE20083969B40A9A /* Good-Nap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Good-Nap.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-6F9D0849122C4EE4B49DF751F426C967 /* Good-NapTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Good-NapTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-A320DC5D49C9481A8422F9814FCAEA4A /* Good-NapUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Good-NapUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		16AC4F64349D4A79A34AFD314142CBF5 /* Good_Nap.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Good_Nap.entitlements; sourceTree = "<group>"; };
+		274A468ACB5F463EBE20083969B40A9A /* Good-Nap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Good-Nap.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		386A8350AD764BB3856B8351EC2D2591 /* NapSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NapSession.swift; sourceTree = "<group>"; };
+		51F6BC902EB3453400193743 /* Good-Nap Watch App Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Good-Nap Watch App Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		51F6BC9C2EB3453500193743 /* Good-Nap Watch App Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Good-Nap Watch App Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		51F6BCA62EB3453500193743 /* Good-Nap Watch App Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Good-Nap Watch App Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		59D0B345570B445A80F71803C1995143 /* Good_NapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Good_NapTests.swift; sourceTree = "<group>"; };
+		5C9BB433B5EB471D95E1A2BEA244C3C3 /* Good_NapUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Good_NapUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		6B91E4EA5E3F4EAA89385363399E8644 /* BiometricData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricData.swift; sourceTree = "<group>"; };
+		6F9D0849122C4EE4B49DF751F426C967 /* Good-NapTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Good-NapTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8B1483CD7BCA4B968D370381F0A11FE1 /* MLModelService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLModelService.swift; sourceTree = "<group>"; };
+		A320DC5D49C9481A8422F9814FCAEA4A /* Good-NapUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Good-NapUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A7129B2894344167AAF47734ADE60DFC /* TrainingDataGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingDataGenerator.swift; sourceTree = "<group>"; };
+		C6CC80BC068E40678B3A9D07FA8337C6 /* MLTrainingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLTrainingView.swift; sourceTree = "<group>"; };
+		E61B7701F51E44F7B71E6FF566A24F66 /* Good_NapApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Good_NapApp.swift; sourceTree = "<group>"; };
+		EA3496B2067540E087B5A4F71CA88761 /* Good_NapUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Good_NapUITests.swift; sourceTree = "<group>"; };
+		F8C52C836D964A5B8F7872A96A4030B9 /* SleepStage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepStage.swift; sourceTree = "<group>"; };
+		F926600FA798419583D6CE0385381D44 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		FD59A32AEE764B66829FDC8A0704AA8B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		51F6BC912EB3453400193743 /* Good-Nap Watch App Watch App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Good-Nap Watch App Watch App"; sourceTree = "<group>"; };
+		51F6BC9F2EB3453500193743 /* Good-Nap Watch App Watch AppTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Good-Nap Watch App Watch AppTests"; sourceTree = "<group>"; };
+		51F6BCA92EB3453500193743 /* Good-Nap Watch App Watch AppUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Good-Nap Watch App Watch AppUITests"; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
-EE703EDD46674333BB65BC61BE25DD9E /* Frameworks */ = {
-isa = PBXFrameworksBuildPhase;
-buildActionMask = 2147483647;
-files = (
-);
-runOnlyForDeploymentPostprocessing = 0;
-};
-15B3C9C56B4E414AB4C0FE74493530CC /* Frameworks */ = {
-isa = PBXFrameworksBuildPhase;
-buildActionMask = 2147483647;
-files = (
-);
-runOnlyForDeploymentPostprocessing = 0;
-};
-1A3E5ED90B754503A955A831B70E1555 /* Frameworks */ = {
-isa = PBXFrameworksBuildPhase;
-buildActionMask = 2147483647;
-files = (
-);
-runOnlyForDeploymentPostprocessing = 0;
-};
+		15B3C9C56B4E414AB4C0FE74493530CC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1A3E5ED90B754503A955A831B70E1555 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		51F6BC8D2EB3453400193743 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		51F6BC992EB3453500193743 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		51F6BCA32EB3453500193743 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EE703EDD46674333BB65BC61BE25DD9E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-B1BE2510759D42DA99B9C9D5A7DA780E = {
-isa = PBXGroup;
-children = (
-36BDA1D7ED4D41219BC8E744414FE3BA /* Good-Nap */,
-6D28D517E5D94C0FBC1DF5300180016D /* Good-NapTests */,
-47FDD146DDC24161B2EDE893490172FE /* Good-NapUITests */,
-7748A257AE454DC99EF36D91A31873D5 /* Products */,
-);
-sourceTree = "<group>";
-};
-7748A257AE454DC99EF36D91A31873D5 /* Products */ = {
-isa = PBXGroup;
-children = (
-274A468ACB5F463EBE20083969B40A9A /* Good-Nap.app */,
-6F9D0849122C4EE4B49DF751F426C967 /* Good-NapTests.xctest */,
-A320DC5D49C9481A8422F9814FCAEA4A /* Good-NapUITests.xctest */,
-);
-name = Products;
-sourceTree = "<group>";
-};
-36BDA1D7ED4D41219BC8E744414FE3BA /* Good-Nap */ = {
-isa = PBXGroup;
-children = (
-E61B7701F51E44F7B71E6FF566A24F66 /* Good_NapApp.swift */,
-F926600FA798419583D6CE0385381D44 /* ContentView.swift */,
-FD59A32AEE764B66829FDC8A0704AA8B /* Assets.xcassets */,
-16AC4F64349D4A79A34AFD314142CBF5 /* Good_Nap.entitlements */,
-03587D2871694F96B179D1F53B74492E /* Models */,
-F7A692A34C7B46CCA3592BA3263B8C6C /* Services */,
-09C120B9B6D44E2791F98EBC90A1BFDC /* Views */,
-);
-path = "Good-Nap";
-sourceTree = "<group>";
-};
-03587D2871694F96B179D1F53B74492E /* Models */ = {
-isa = PBXGroup;
-children = (
-6B91E4EA5E3F4EAA89385363399E8644 /* BiometricData.swift */,
-386A8350AD764BB3856B8351EC2D2591 /* NapSession.swift */,
-F8C52C836D964A5B8F7872A96A4030B9 /* SleepStage.swift */,
-);
-path = Models;
-sourceTree = "<group>";
-};
-F7A692A34C7B46CCA3592BA3263B8C6C /* Services */ = {
-isa = PBXGroup;
-children = (
-8B1483CD7BCA4B968D370381F0A11FE1 /* MLModelService.swift */,
-A7129B2894344167AAF47734ADE60DFC /* TrainingDataGenerator.swift */,
-);
-path = Services;
-sourceTree = "<group>";
-};
-09C120B9B6D44E2791F98EBC90A1BFDC /* Views */ = {
-isa = PBXGroup;
-children = (
-C6CC80BC068E40678B3A9D07FA8337C6 /* MLTrainingView.swift */,
-);
-path = Views;
-sourceTree = "<group>";
-};
-6D28D517E5D94C0FBC1DF5300180016D /* Good-NapTests */ = {
-isa = PBXGroup;
-children = (
-59D0B345570B445A80F71803C1995143 /* Good_NapTests.swift */,
-);
-path = "Good-NapTests";
-sourceTree = "<group>";
-};
-47FDD146DDC24161B2EDE893490172FE /* Good-NapUITests */ = {
-isa = PBXGroup;
-children = (
-EA3496B2067540E087B5A4F71CA88761 /* Good_NapUITests.swift */,
-5C9BB433B5EB471D95E1A2BEA244C3C3 /* Good_NapUITestsLaunchTests.swift */,
-);
-path = "Good-NapUITests";
-sourceTree = "<group>";
-};
+		03587D2871694F96B179D1F53B74492E /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				6B91E4EA5E3F4EAA89385363399E8644 /* BiometricData.swift */,
+				386A8350AD764BB3856B8351EC2D2591 /* NapSession.swift */,
+				F8C52C836D964A5B8F7872A96A4030B9 /* SleepStage.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		09C120B9B6D44E2791F98EBC90A1BFDC /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				C6CC80BC068E40678B3A9D07FA8337C6 /* MLTrainingView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		36BDA1D7ED4D41219BC8E744414FE3BA /* Good-Nap */ = {
+			isa = PBXGroup;
+			children = (
+				E61B7701F51E44F7B71E6FF566A24F66 /* Good_NapApp.swift */,
+				F926600FA798419583D6CE0385381D44 /* ContentView.swift */,
+				FD59A32AEE764B66829FDC8A0704AA8B /* Assets.xcassets */,
+				16AC4F64349D4A79A34AFD314142CBF5 /* Good_Nap.entitlements */,
+				03587D2871694F96B179D1F53B74492E /* Models */,
+				F7A692A34C7B46CCA3592BA3263B8C6C /* Services */,
+				09C120B9B6D44E2791F98EBC90A1BFDC /* Views */,
+			);
+			path = "Good-Nap";
+			sourceTree = "<group>";
+		};
+		47FDD146DDC24161B2EDE893490172FE /* Good-NapUITests */ = {
+			isa = PBXGroup;
+			children = (
+				EA3496B2067540E087B5A4F71CA88761 /* Good_NapUITests.swift */,
+				5C9BB433B5EB471D95E1A2BEA244C3C3 /* Good_NapUITestsLaunchTests.swift */,
+			);
+			path = "Good-NapUITests";
+			sourceTree = "<group>";
+		};
+		6D28D517E5D94C0FBC1DF5300180016D /* Good-NapTests */ = {
+			isa = PBXGroup;
+			children = (
+				59D0B345570B445A80F71803C1995143 /* Good_NapTests.swift */,
+			);
+			path = "Good-NapTests";
+			sourceTree = "<group>";
+		};
+		7748A257AE454DC99EF36D91A31873D5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				274A468ACB5F463EBE20083969B40A9A /* Good-Nap.app */,
+				6F9D0849122C4EE4B49DF751F426C967 /* Good-NapTests.xctest */,
+				A320DC5D49C9481A8422F9814FCAEA4A /* Good-NapUITests.xctest */,
+				51F6BC902EB3453400193743 /* Good-Nap Watch App Watch App.app */,
+				51F6BC9C2EB3453500193743 /* Good-Nap Watch App Watch AppTests.xctest */,
+				51F6BCA62EB3453500193743 /* Good-Nap Watch App Watch AppUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B1BE2510759D42DA99B9C9D5A7DA780E = {
+			isa = PBXGroup;
+			children = (
+				36BDA1D7ED4D41219BC8E744414FE3BA /* Good-Nap */,
+				6D28D517E5D94C0FBC1DF5300180016D /* Good-NapTests */,
+				47FDD146DDC24161B2EDE893490172FE /* Good-NapUITests */,
+				51F6BC912EB3453400193743 /* Good-Nap Watch App Watch App */,
+				51F6BC9F2EB3453500193743 /* Good-Nap Watch App Watch AppTests */,
+				51F6BCA92EB3453500193743 /* Good-Nap Watch App Watch AppUITests */,
+				7748A257AE454DC99EF36D91A31873D5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F7A692A34C7B46CCA3592BA3263B8C6C /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				8B1483CD7BCA4B968D370381F0A11FE1 /* MLModelService.swift */,
+				A7129B2894344167AAF47734ADE60DFC /* TrainingDataGenerator.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-92C9D19E0131431798E4A27D2FF74A9E /* Good-Nap */ = {
-isa = PBXNativeTarget;
-buildConfigurationList = ECD87472D17C4AB1BACA50B1F5904041 /* Build configuration list for PBXNativeTarget "Good-Nap" */;
-buildPhases = (
-308CACAB14A54F4190B94CADAFBC0261 /* Sources */,
-EE703EDD46674333BB65BC61BE25DD9E /* Frameworks */,
-B8338DEC6E18450888DD98E7569CE117 /* Resources */,
-);
-buildRules = (
-);
-dependencies = (
-);
-name = "Good-Nap";
-productName = "Good-Nap";
-productReference = 274A468ACB5F463EBE20083969B40A9A /* Good-Nap.app */;
-productType = "com.apple.product-type.application";
-};
-4A3FCFC344874F42ADA04E5D85D9C828 /* Good-NapTests */ = {
-isa = PBXNativeTarget;
-buildConfigurationList = 0372532866BE4B0483207D2B91271752 /* Build configuration list for PBXNativeTarget "Good-NapTests" */;
-buildPhases = (
-3406027D2E9442C5B48057003839AAFD /* Sources */,
-15B3C9C56B4E414AB4C0FE74493530CC /* Frameworks */,
-4629E4FC8C0D48A78ECDD1CF9717BFD6 /* Resources */,
-);
-buildRules = (
-);
-dependencies = (
-AAB8E4E9A606418784C85ECA9A9B4664 /* PBXTargetDependency */,
-);
-name = "Good-NapTests";
-productName = "Good-NapTests";
-productReference = 6F9D0849122C4EE4B49DF751F426C967 /* Good-NapTests.xctest */;
-productType = "com.apple.product-type.bundle.unit-test";
-};
-52E73C72BF4246A3B564480DBA39B27E /* Good-NapUITests */ = {
-isa = PBXNativeTarget;
-buildConfigurationList = 160597CC1A57400C9D240BAA30573176 /* Build configuration list for PBXNativeTarget "Good-NapUITests" */;
-buildPhases = (
-A7E8163A860E4D2190D551BF62FF7A96 /* Sources */,
-1A3E5ED90B754503A955A831B70E1555 /* Frameworks */,
-77B993494DE2487FB6B0D3F50A371DC2 /* Resources */,
-);
-buildRules = (
-);
-dependencies = (
-34C2278984284FB98CF38B77F8B376C0 /* PBXTargetDependency */,
-);
-name = "Good-NapUITests";
-productName = "Good-NapUITests";
-productReference = A320DC5D49C9481A8422F9814FCAEA4A /* Good-NapUITests.xctest */;
-productType = "com.apple.product-type.bundle.ui-testing";
-};
+		4A3FCFC344874F42ADA04E5D85D9C828 /* Good-NapTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0372532866BE4B0483207D2B91271752 /* Build configuration list for PBXNativeTarget "Good-NapTests" */;
+			buildPhases = (
+				3406027D2E9442C5B48057003839AAFD /* Sources */,
+				15B3C9C56B4E414AB4C0FE74493530CC /* Frameworks */,
+				4629E4FC8C0D48A78ECDD1CF9717BFD6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AAB8E4E9A606418784C85ECA9A9B4664 /* PBXTargetDependency */,
+			);
+			name = "Good-NapTests";
+			productName = "Good-NapTests";
+			productReference = 6F9D0849122C4EE4B49DF751F426C967 /* Good-NapTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		51F6BC8F2EB3453400193743 /* Good-Nap Watch App Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 51F6BCB12EB3453500193743 /* Build configuration list for PBXNativeTarget "Good-Nap Watch App Watch App" */;
+			buildPhases = (
+				51F6BC8C2EB3453400193743 /* Sources */,
+				51F6BC8D2EB3453400193743 /* Frameworks */,
+				51F6BC8E2EB3453400193743 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				51F6BC912EB3453400193743 /* Good-Nap Watch App Watch App */,
+			);
+			name = "Good-Nap Watch App Watch App";
+			packageProductDependencies = (
+			);
+			productName = "Good-Nap Watch App Watch App";
+			productReference = 51F6BC902EB3453400193743 /* Good-Nap Watch App Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
+		51F6BC9B2EB3453500193743 /* Good-Nap Watch App Watch AppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 51F6BCB52EB3453500193743 /* Build configuration list for PBXNativeTarget "Good-Nap Watch App Watch AppTests" */;
+			buildPhases = (
+				51F6BC982EB3453500193743 /* Sources */,
+				51F6BC992EB3453500193743 /* Frameworks */,
+				51F6BC9A2EB3453500193743 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				51F6BC9E2EB3453500193743 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				51F6BC9F2EB3453500193743 /* Good-Nap Watch App Watch AppTests */,
+			);
+			name = "Good-Nap Watch App Watch AppTests";
+			packageProductDependencies = (
+			);
+			productName = "Good-Nap Watch App Watch AppTests";
+			productReference = 51F6BC9C2EB3453500193743 /* Good-Nap Watch App Watch AppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		51F6BCA52EB3453500193743 /* Good-Nap Watch App Watch AppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 51F6BCB82EB3453500193743 /* Build configuration list for PBXNativeTarget "Good-Nap Watch App Watch AppUITests" */;
+			buildPhases = (
+				51F6BCA22EB3453500193743 /* Sources */,
+				51F6BCA32EB3453500193743 /* Frameworks */,
+				51F6BCA42EB3453500193743 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				51F6BCA82EB3453500193743 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				51F6BCA92EB3453500193743 /* Good-Nap Watch App Watch AppUITests */,
+			);
+			name = "Good-Nap Watch App Watch AppUITests";
+			packageProductDependencies = (
+			);
+			productName = "Good-Nap Watch App Watch AppUITests";
+			productReference = 51F6BCA62EB3453500193743 /* Good-Nap Watch App Watch AppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		52E73C72BF4246A3B564480DBA39B27E /* Good-NapUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 160597CC1A57400C9D240BAA30573176 /* Build configuration list for PBXNativeTarget "Good-NapUITests" */;
+			buildPhases = (
+				A7E8163A860E4D2190D551BF62FF7A96 /* Sources */,
+				1A3E5ED90B754503A955A831B70E1555 /* Frameworks */,
+				77B993494DE2487FB6B0D3F50A371DC2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				34C2278984284FB98CF38B77F8B376C0 /* PBXTargetDependency */,
+			);
+			name = "Good-NapUITests";
+			productName = "Good-NapUITests";
+			productReference = A320DC5D49C9481A8422F9814FCAEA4A /* Good-NapUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		92C9D19E0131431798E4A27D2FF74A9E /* Good-Nap */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ECD87472D17C4AB1BACA50B1F5904041 /* Build configuration list for PBXNativeTarget "Good-Nap" */;
+			buildPhases = (
+				308CACAB14A54F4190B94CADAFBC0261 /* Sources */,
+				EE703EDD46674333BB65BC61BE25DD9E /* Frameworks */,
+				B8338DEC6E18450888DD98E7569CE117 /* Resources */,
+				51F6BCB42EB3453500193743 /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				51F6BCAF2EB3453500193743 /* PBXTargetDependency */,
+			);
+			name = "Good-Nap";
+			productName = "Good-Nap";
+			productReference = 274A468ACB5F463EBE20083969B40A9A /* Good-Nap.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-0B4E0F6B99CB45EF8B3CC20B8EB7B4F6 /* Project object */ = {
-isa = PBXProject;
-attributes = {
-BuildIndependentTargetsInParallel = 1;
-LastSwiftUpdateCheck = 1630;
-LastUpgradeCheck = 1630;
-TargetAttributes = {
-92C9D19E0131431798E4A27D2FF74A9E = {
-CreatedOnToolsVersion = 16.3;
-};
-4A3FCFC344874F42ADA04E5D85D9C828 = {
-CreatedOnToolsVersion = 16.3;
-TestTargetID = 92C9D19E0131431798E4A27D2FF74A9E;
-};
-52E73C72BF4246A3B564480DBA39B27E = {
-CreatedOnToolsVersion = 16.3;
-TestTargetID = 92C9D19E0131431798E4A27D2FF74A9E;
-};
-};
-};
-buildConfigurationList = 4A062ED35A5D494483EAE821ABC4446C /* Build configuration list for PBXProject "Good-Nap" */;
-compatibilityVersion = "Xcode 15.0";
-developmentRegion = en;
-hasScannedForEncodings = 0;
-knownRegions = (
-en,
-Base,
-);
-mainGroup = B1BE2510759D42DA99B9C9D5A7DA780E;
-productRefGroup = 7748A257AE454DC99EF36D91A31873D5 /* Products */;
-projectDirPath = "";
-projectRoot = "";
-targets = (
-92C9D19E0131431798E4A27D2FF74A9E /* Good-Nap */,
-4A3FCFC344874F42ADA04E5D85D9C828 /* Good-NapTests */,
-52E73C72BF4246A3B564480DBA39B27E /* Good-NapUITests */,
-);
-};
+		0B4E0F6B99CB45EF8B3CC20B8EB7B4F6 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1630;
+				LastUpgradeCheck = 1630;
+				TargetAttributes = {
+					4A3FCFC344874F42ADA04E5D85D9C828 = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = 92C9D19E0131431798E4A27D2FF74A9E;
+					};
+					51F6BC8F2EB3453400193743 = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					51F6BC9B2EB3453500193743 = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = 51F6BC8F2EB3453400193743;
+					};
+					51F6BCA52EB3453500193743 = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = 51F6BC8F2EB3453400193743;
+					};
+					52E73C72BF4246A3B564480DBA39B27E = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = 92C9D19E0131431798E4A27D2FF74A9E;
+					};
+					92C9D19E0131431798E4A27D2FF74A9E = {
+						CreatedOnToolsVersion = 16.3;
+					};
+				};
+			};
+			buildConfigurationList = 4A062ED35A5D494483EAE821ABC4446C /* Build configuration list for PBXProject "Good-Nap" */;
+			compatibilityVersion = "Xcode 15.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = B1BE2510759D42DA99B9C9D5A7DA780E;
+			productRefGroup = 7748A257AE454DC99EF36D91A31873D5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				92C9D19E0131431798E4A27D2FF74A9E /* Good-Nap */,
+				4A3FCFC344874F42ADA04E5D85D9C828 /* Good-NapTests */,
+				52E73C72BF4246A3B564480DBA39B27E /* Good-NapUITests */,
+				51F6BC8F2EB3453400193743 /* Good-Nap Watch App Watch App */,
+				51F6BC9B2EB3453500193743 /* Good-Nap Watch App Watch AppTests */,
+				51F6BCA52EB3453500193743 /* Good-Nap Watch App Watch AppUITests */,
+			);
+		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-B8338DEC6E18450888DD98E7569CE117 /* Resources */ = {
-isa = PBXResourcesBuildPhase;
-buildActionMask = 2147483647;
-files = (
-1B2E791044E2408BB10B98D5FB7FD167 /* Assets.xcassets in Resources */,
-);
-runOnlyForDeploymentPostprocessing = 0;
-};
-4629E4FC8C0D48A78ECDD1CF9717BFD6 /* Resources */ = {
-isa = PBXResourcesBuildPhase;
-buildActionMask = 2147483647;
-files = (
-);
-runOnlyForDeploymentPostprocessing = 0;
-};
-77B993494DE2487FB6B0D3F50A371DC2 /* Resources */ = {
-isa = PBXResourcesBuildPhase;
-buildActionMask = 2147483647;
-files = (
-);
-runOnlyForDeploymentPostprocessing = 0;
-};
+		4629E4FC8C0D48A78ECDD1CF9717BFD6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		51F6BC8E2EB3453400193743 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		51F6BC9A2EB3453500193743 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		51F6BCA42EB3453500193743 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		77B993494DE2487FB6B0D3F50A371DC2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B8338DEC6E18450888DD98E7569CE117 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1B2E791044E2408BB10B98D5FB7FD167 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-308CACAB14A54F4190B94CADAFBC0261 /* Sources */ = {
-isa = PBXSourcesBuildPhase;
-buildActionMask = 2147483647;
-files = (
-9F04CEF9766E422DA20D2B12F4ED9278 /* MLTrainingView.swift in Sources */,
-1C14F2EA07CC4424AC53BA1EEE5F6FD8 /* TrainingDataGenerator.swift in Sources */,
-F9B719188FD04D778B37907A631B3CAC /* MLModelService.swift in Sources */,
-80F55CBB987443B687D4D4D0492E111A /* SleepStage.swift in Sources */,
-36FEDC82016C41AA9152FF5D29C81347 /* NapSession.swift in Sources */,
-4DCC93FF7DD94218960B349F6D9B31E4 /* BiometricData.swift in Sources */,
-4EF67EB2BABB418EAD62FDD56292C9C5 /* ContentView.swift in Sources */,
-173D8F479E524484889A2417F35EBA2F /* Good_NapApp.swift in Sources */,
-);
-runOnlyForDeploymentPostprocessing = 0;
-};
-3406027D2E9442C5B48057003839AAFD /* Sources */ = {
-isa = PBXSourcesBuildPhase;
-buildActionMask = 2147483647;
-files = (
-0356276DC381470FAE0B6B724EF2F3D9 /* Good_NapTests.swift in Sources */,
-);
-runOnlyForDeploymentPostprocessing = 0;
-};
-A7E8163A860E4D2190D551BF62FF7A96 /* Sources */ = {
-isa = PBXSourcesBuildPhase;
-buildActionMask = 2147483647;
-files = (
-C8C4E17F05F04018BC4C30FCF3EF6DA0 /* Good_NapUITests.swift in Sources */,
-AF58404B1DC44F1D97CAD865F19BE07F /* Good_NapUITestsLaunchTests.swift in Sources */,
-);
-runOnlyForDeploymentPostprocessing = 0;
-};
+		308CACAB14A54F4190B94CADAFBC0261 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9F04CEF9766E422DA20D2B12F4ED9278 /* MLTrainingView.swift in Sources */,
+				1C14F2EA07CC4424AC53BA1EEE5F6FD8 /* TrainingDataGenerator.swift in Sources */,
+				F9B719188FD04D778B37907A631B3CAC /* MLModelService.swift in Sources */,
+				80F55CBB987443B687D4D4D0492E111A /* SleepStage.swift in Sources */,
+				36FEDC82016C41AA9152FF5D29C81347 /* NapSession.swift in Sources */,
+				4DCC93FF7DD94218960B349F6D9B31E4 /* BiometricData.swift in Sources */,
+				4EF67EB2BABB418EAD62FDD56292C9C5 /* ContentView.swift in Sources */,
+				173D8F479E524484889A2417F35EBA2F /* Good_NapApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3406027D2E9442C5B48057003839AAFD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0356276DC381470FAE0B6B724EF2F3D9 /* Good_NapTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		51F6BC8C2EB3453400193743 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		51F6BC982EB3453500193743 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		51F6BCA22EB3453500193743 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A7E8163A860E4D2190D551BF62FF7A96 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C8C4E17F05F04018BC4C30FCF3EF6DA0 /* Good_NapUITests.swift in Sources */,
+				AF58404B1DC44F1D97CAD865F19BE07F /* Good_NapUITestsLaunchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-AAB8E4E9A606418784C85ECA9A9B4664 /* PBXTargetDependency */ = {
-isa = PBXTargetDependency;
-target = 92C9D19E0131431798E4A27D2FF74A9E /* Good-Nap */;
-targetProxy = 37858DC729E04D62B60A850771365A28 /* PBXContainerItemProxy */;
-};
-34C2278984284FB98CF38B77F8B376C0 /* PBXTargetDependency */ = {
-isa = PBXTargetDependency;
-target = 92C9D19E0131431798E4A27D2FF74A9E /* Good-Nap */;
-targetProxy = E7DA39DBF3914D00973D80704DAE25BC /* PBXContainerItemProxy */;
-};
+		34C2278984284FB98CF38B77F8B376C0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 92C9D19E0131431798E4A27D2FF74A9E /* Good-Nap */;
+			targetProxy = E7DA39DBF3914D00973D80704DAE25BC /* PBXContainerItemProxy */;
+		};
+		51F6BC9E2EB3453500193743 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 51F6BC8F2EB3453400193743 /* Good-Nap Watch App Watch App */;
+			targetProxy = 51F6BC9D2EB3453500193743 /* PBXContainerItemProxy */;
+		};
+		51F6BCA82EB3453500193743 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 51F6BC8F2EB3453400193743 /* Good-Nap Watch App Watch App */;
+			targetProxy = 51F6BCA72EB3453500193743 /* PBXContainerItemProxy */;
+		};
+		51F6BCAF2EB3453500193743 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 51F6BC8F2EB3453400193743 /* Good-Nap Watch App Watch App */;
+			targetProxy = 51F6BCAE2EB3453500193743 /* PBXContainerItemProxy */;
+		};
+		AAB8E4E9A606418784C85ECA9A9B4664 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 92C9D19E0131431798E4A27D2FF74A9E /* Good-Nap */;
+			targetProxy = 37858DC729E04D62B60A850771365A28 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-38EC8342F1564F00A9FB4ED4112175F9 /* Debug */ = {
-isa = XCBuildConfiguration;
-buildSettings = {
-ALWAYS_SEARCH_USER_PATHS = NO;
-ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-CLANG_ANALYZER_NONNULL = YES;
-CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-CLANG_ENABLE_MODULES = YES;
-CLANG_ENABLE_OBJC_ARC = YES;
-CLANG_ENABLE_OBJC_WEAK = YES;
-CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-CLANG_WARN_BOOL_CONVERSION = YES;
-CLANG_WARN_COMMA = YES;
-CLANG_WARN_CONSTANT_CONVERSION = YES;
-CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-CLANG_WARN_EMPTY_BODY = YES;
-CLANG_WARN_ENUM_CONVERSION = YES;
-CLANG_WARN_INFINITE_RECURSION = YES;
-CLANG_WARN_INT_CONVERSION = YES;
-CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-CLANG_WARN_STRICT_PROTOTYPES = YES;
-CLANG_WARN_SUSPICIOUS_MOVE = YES;
-CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-CLANG_WARN_UNREACHABLE_CODE = YES;
-CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-COPY_PHASE_STRIP = NO;
-DEBUG_INFORMATION_FORMAT = dwarf;
-ENABLE_STRICT_OBJC_MSGSEND = YES;
-ENABLE_TESTABILITY = YES;
-ENABLE_USER_SCRIPT_SANDBOXING = YES;
-GCC_C_LANGUAGE_STANDARD = gnu17;
-GCC_DYNAMIC_NO_PIC = NO;
-GCC_NO_COMMON_BLOCKS = YES;
-GCC_OPTIMIZATION_LEVEL = 0;
-GCC_PREPROCESSOR_DEFINITIONS = (
-"DEBUG=1",
-"$(inherited)",
-);
-GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-GCC_WARN_UNDECLARED_SELECTOR = YES;
-GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-GCC_WARN_UNUSED_FUNCTION = YES;
-GCC_WARN_UNUSED_VARIABLE = YES;
-LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-MTL_FAST_MATH = YES;
-ONLY_ACTIVE_ARCH = YES;
-SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
-SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-};
-name = Debug;
-};
-F6CC1E48C07F43D3AE307D7DD74397D2 /* Release */ = {
-isa = XCBuildConfiguration;
-buildSettings = {
-ALWAYS_SEARCH_USER_PATHS = NO;
-ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-CLANG_ANALYZER_NONNULL = YES;
-CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-CLANG_ENABLE_MODULES = YES;
-CLANG_ENABLE_OBJC_ARC = YES;
-CLANG_ENABLE_OBJC_WEAK = YES;
-CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-CLANG_WARN_BOOL_CONVERSION = YES;
-CLANG_WARN_COMMA = YES;
-CLANG_WARN_CONSTANT_CONVERSION = YES;
-CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-CLANG_WARN_EMPTY_BODY = YES;
-CLANG_WARN_ENUM_CONVERSION = YES;
-CLANG_WARN_INFINITE_RECURSION = YES;
-CLANG_WARN_INT_CONVERSION = YES;
-CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-CLANG_WARN_STRICT_PROTOTYPES = YES;
-CLANG_WARN_SUSPICIOUS_MOVE = YES;
-CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-CLANG_WARN_UNREACHABLE_CODE = YES;
-CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-COPY_PHASE_STRIP = NO;
-DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-ENABLE_NS_ASSERTIONS = NO;
-ENABLE_STRICT_OBJC_MSGSEND = YES;
-ENABLE_USER_SCRIPT_SANDBOXING = YES;
-GCC_C_LANGUAGE_STANDARD = gnu17;
-GCC_NO_COMMON_BLOCKS = YES;
-GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-GCC_WARN_UNDECLARED_SELECTOR = YES;
-GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-GCC_WARN_UNUSED_FUNCTION = YES;
-GCC_WARN_UNUSED_VARIABLE = YES;
-LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-MTL_ENABLE_DEBUG_INFO = NO;
-MTL_FAST_MATH = YES;
-SWIFT_COMPILATION_MODE = wholemodule;
-};
-name = Release;
-};
-B6E1237EB012441498266905EB412179 /* Debug */ = {
-isa = XCBuildConfiguration;
-buildSettings = {
-ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-CODE_SIGN_ENTITLEMENTS = "Good-Nap/Good_Nap.entitlements";
-CODE_SIGN_STYLE = Automatic;
-CURRENT_PROJECT_VERSION = 1;
-ENABLE_PREVIEWS = YES;
-GENERATE_INFOPLIST_FILE = YES;
-"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
-"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
-"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
-"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
-"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
-"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
-"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
-"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-IPHONEOS_DEPLOYMENT_TARGET = 18.4;
-LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-MACOSX_DEPLOYMENT_TARGET = 15.4;
-MARKETING_VERSION = 1.0;
-PRODUCT_BUNDLE_IDENTIFIER = "goodnap.Good-Nap";
-PRODUCT_NAME = "$(TARGET_NAME)";
-REGISTER_APP_GROUPS = YES;
-SDKROOT = auto;
-SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-SWIFT_EMIT_LOC_STRINGS = YES;
-SWIFT_VERSION = 5.0;
-TARGETED_DEVICE_FAMILY = "1,2,7";
-XROS_DEPLOYMENT_TARGET = 2.4;
-};
-name = Debug;
-};
-55397D433B3543D3ADBE903FAA8A6C39 /* Release */ = {
-isa = XCBuildConfiguration;
-buildSettings = {
-ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-CODE_SIGN_ENTITLEMENTS = "Good-Nap/Good_Nap.entitlements";
-CODE_SIGN_STYLE = Automatic;
-CURRENT_PROJECT_VERSION = 1;
-ENABLE_PREVIEWS = YES;
-GENERATE_INFOPLIST_FILE = YES;
-"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
-"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
-"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
-"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
-"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
-"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
-"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
-"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-IPHONEOS_DEPLOYMENT_TARGET = 18.4;
-LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-MACOSX_DEPLOYMENT_TARGET = 15.4;
-MARKETING_VERSION = 1.0;
-PRODUCT_BUNDLE_IDENTIFIER = "goodnap.Good-Nap";
-PRODUCT_NAME = "$(TARGET_NAME)";
-REGISTER_APP_GROUPS = YES;
-SDKROOT = auto;
-SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-SWIFT_EMIT_LOC_STRINGS = YES;
-SWIFT_VERSION = 5.0;
-TARGETED_DEVICE_FAMILY = "1,2,7";
-XROS_DEPLOYMENT_TARGET = 2.4;
-};
-name = Release;
-};
-9D16486B51E14FF59B7BB503A7F0D82E /* Debug */ = {
-isa = XCBuildConfiguration;
-buildSettings = {
-BUNDLE_LOADER = "$(TEST_HOST)";
-CODE_SIGN_STYLE = Automatic;
-CURRENT_PROJECT_VERSION = 1;
-GENERATE_INFOPLIST_FILE = YES;
-IPHONEOS_DEPLOYMENT_TARGET = 18.4;
-MACOSX_DEPLOYMENT_TARGET = 15.4;
-MARKETING_VERSION = 1.0;
-PRODUCT_BUNDLE_IDENTIFIER = "goodnap.Good-NapTests";
-PRODUCT_NAME = "$(TARGET_NAME)";
-SDKROOT = auto;
-SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-SWIFT_EMIT_LOC_STRINGS = NO;
-SWIFT_VERSION = 5.0;
-TARGETED_DEVICE_FAMILY = "1,2,7";
-TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Good-Nap.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Good-Nap";
-XROS_DEPLOYMENT_TARGET = 2.4;
-};
-name = Debug;
-};
-D378A15200CB4B75B94F1F8CF37A1CE5 /* Release */ = {
-isa = XCBuildConfiguration;
-buildSettings = {
-BUNDLE_LOADER = "$(TEST_HOST)";
-CODE_SIGN_STYLE = Automatic;
-CURRENT_PROJECT_VERSION = 1;
-GENERATE_INFOPLIST_FILE = YES;
-IPHONEOS_DEPLOYMENT_TARGET = 18.4;
-MACOSX_DEPLOYMENT_TARGET = 15.4;
-MARKETING_VERSION = 1.0;
-PRODUCT_BUNDLE_IDENTIFIER = "goodnap.Good-NapTests";
-PRODUCT_NAME = "$(TARGET_NAME)";
-SDKROOT = auto;
-SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-SWIFT_EMIT_LOC_STRINGS = NO;
-SWIFT_VERSION = 5.0;
-TARGETED_DEVICE_FAMILY = "1,2,7";
-TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Good-Nap.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Good-Nap";
-XROS_DEPLOYMENT_TARGET = 2.4;
-};
-name = Release;
-};
-E45BD74C40A444C9AE50626E940027CA /* Debug */ = {
-isa = XCBuildConfiguration;
-buildSettings = {
-CODE_SIGN_STYLE = Automatic;
-CURRENT_PROJECT_VERSION = 1;
-GENERATE_INFOPLIST_FILE = YES;
-IPHONEOS_DEPLOYMENT_TARGET = 18.4;
-MACOSX_DEPLOYMENT_TARGET = 15.4;
-MARKETING_VERSION = 1.0;
-PRODUCT_BUNDLE_IDENTIFIER = "goodnap.Good-NapUITests";
-PRODUCT_NAME = "$(TARGET_NAME)";
-SDKROOT = auto;
-SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-SWIFT_EMIT_LOC_STRINGS = NO;
-SWIFT_VERSION = 5.0;
-TARGETED_DEVICE_FAMILY = "1,2,7";
-TEST_TARGET_NAME = "Good-Nap";
-XROS_DEPLOYMENT_TARGET = 2.4;
-};
-name = Debug;
-};
-D2B0E4D571F143D0A4F15C9C7EF269DF /* Release */ = {
-isa = XCBuildConfiguration;
-buildSettings = {
-CODE_SIGN_STYLE = Automatic;
-CURRENT_PROJECT_VERSION = 1;
-GENERATE_INFOPLIST_FILE = YES;
-IPHONEOS_DEPLOYMENT_TARGET = 18.4;
-MACOSX_DEPLOYMENT_TARGET = 15.4;
-MARKETING_VERSION = 1.0;
-PRODUCT_BUNDLE_IDENTIFIER = "goodnap.Good-NapUITests";
-PRODUCT_NAME = "$(TARGET_NAME)";
-SDKROOT = auto;
-SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-SWIFT_EMIT_LOC_STRINGS = NO;
-SWIFT_VERSION = 5.0;
-TARGETED_DEVICE_FAMILY = "1,2,7";
-TEST_TARGET_NAME = "Good-Nap";
-XROS_DEPLOYMENT_TARGET = 2.4;
-};
-name = Release;
-};
+		38EC8342F1564F00A9FB4ED4112175F9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		51F6BCB22EB3453500193743 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z6YX6V8J24;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Good-Nap Watch App";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "com.kanchi.Good-Nap.macOS";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.kanchi.Good-Nap.macOS.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.4;
+			};
+			name = Debug;
+		};
+		51F6BCB32EB3453500193743 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z6YX6V8J24;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Good-Nap Watch App";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "com.kanchi.Good-Nap.macOS";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.kanchi.Good-Nap.macOS.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 11.4;
+			};
+			name = Release;
+		};
+		51F6BCB62EB3453500193743 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z6YX6V8J24;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "goodnap.Good-Nap-Watch-App-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Good-Nap Watch App Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Good-Nap Watch App Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 11.4;
+			};
+			name = Debug;
+		};
+		51F6BCB72EB3453500193743 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z6YX6V8J24;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "goodnap.Good-Nap-Watch-App-Watch-AppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Good-Nap Watch App Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Good-Nap Watch App Watch App";
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 11.4;
+			};
+			name = Release;
+		};
+		51F6BCB92EB3453500193743 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z6YX6V8J24;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "goodnap.Good-Nap-Watch-App-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "Good-Nap Watch App Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 11.4;
+			};
+			name = Debug;
+		};
+		51F6BCBA2EB3453500193743 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z6YX6V8J24;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "goodnap.Good-Nap-Watch-App-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = "Good-Nap Watch App Watch App";
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 11.4;
+			};
+			name = Release;
+		};
+		55397D433B3543D3ADBE903FAA8A6C39 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Good-Nap/Good_Nap.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z6YX6V8J24;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "goodnap.Good-Nap";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = "com.kanchi.Good-Nap";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = "com.kanchi.Good-Nap.macOS";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=xros*]" = "com.kanchi.Good-Nap.visionOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 2.4;
+			};
+			name = Release;
+		};
+		9D16486B51E14FF59B7BB503A7F0D82E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z6YX6V8J24;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "goodnap.Good-NapTests";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = "goodname.kanchi.Good-NapTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Good-Nap.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Good-Nap";
+				XROS_DEPLOYMENT_TARGET = 2.4;
+			};
+			name = Debug;
+		};
+		B6E1237EB012441498266905EB412179 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Good-Nap/Good_Nap.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z6YX6V8J24;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
+				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
+				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "goodnap.Good-Nap";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = "com.kanchi.Good-Nap";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = "com.kanchi.Good-Nap.macOS";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=xros*]" = "com.kanchi.Good-Nap.visionOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 2.4;
+			};
+			name = Debug;
+		};
+		D2B0E4D571F143D0A4F15C9C7EF269DF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z6YX6V8J24;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "goodnap.Good-NapUITests";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = "goodnap.kanchi.Good-NapUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_TARGET_NAME = "Good-Nap";
+				XROS_DEPLOYMENT_TARGET = 2.4;
+			};
+			name = Release;
+		};
+		D378A15200CB4B75B94F1F8CF37A1CE5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z6YX6V8J24;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "goodnap.Good-NapTests";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = "goodname.kanchi.Good-NapTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Good-Nap.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Good-Nap";
+				XROS_DEPLOYMENT_TARGET = 2.4;
+			};
+			name = Release;
+		};
+		E45BD74C40A444C9AE50626E940027CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z6YX6V8J24;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "goodnap.Good-NapUITests";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = "goodnap.kanchi.Good-NapUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_TARGET_NAME = "Good-Nap";
+				XROS_DEPLOYMENT_TARGET = 2.4;
+			};
+			name = Debug;
+		};
+		F6CC1E48C07F43D3AE307D7DD74397D2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-4A062ED35A5D494483EAE821ABC4446C /* Build configuration list for PBXProject "Good-Nap" */ = {
-isa = XCConfigurationList;
-buildConfigurations = (
-38EC8342F1564F00A9FB4ED4112175F9 /* Debug */,
-F6CC1E48C07F43D3AE307D7DD74397D2 /* Release */,
-);
-defaultConfigurationIsVisible = 0;
-defaultConfigurationName = Release;
-};
-ECD87472D17C4AB1BACA50B1F5904041 /* Build configuration list for PBXNativeTarget "Good-Nap" */ = {
-isa = XCConfigurationList;
-buildConfigurations = (
-B6E1237EB012441498266905EB412179 /* Debug */,
-55397D433B3543D3ADBE903FAA8A6C39 /* Release */,
-);
-defaultConfigurationIsVisible = 0;
-defaultConfigurationName = Release;
-};
-0372532866BE4B0483207D2B91271752 /* Build configuration list for PBXNativeTarget "Good-NapTests" */ = {
-isa = XCConfigurationList;
-buildConfigurations = (
-9D16486B51E14FF59B7BB503A7F0D82E /* Debug */,
-D378A15200CB4B75B94F1F8CF37A1CE5 /* Release */,
-);
-defaultConfigurationIsVisible = 0;
-defaultConfigurationName = Release;
-};
-160597CC1A57400C9D240BAA30573176 /* Build configuration list for PBXNativeTarget "Good-NapUITests" */ = {
-isa = XCConfigurationList;
-buildConfigurations = (
-E45BD74C40A444C9AE50626E940027CA /* Debug */,
-D2B0E4D571F143D0A4F15C9C7EF269DF /* Release */,
-);
-defaultConfigurationIsVisible = 0;
-defaultConfigurationName = Release;
-};
+		0372532866BE4B0483207D2B91271752 /* Build configuration list for PBXNativeTarget "Good-NapTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9D16486B51E14FF59B7BB503A7F0D82E /* Debug */,
+				D378A15200CB4B75B94F1F8CF37A1CE5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		160597CC1A57400C9D240BAA30573176 /* Build configuration list for PBXNativeTarget "Good-NapUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E45BD74C40A444C9AE50626E940027CA /* Debug */,
+				D2B0E4D571F143D0A4F15C9C7EF269DF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4A062ED35A5D494483EAE821ABC4446C /* Build configuration list for PBXProject "Good-Nap" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				38EC8342F1564F00A9FB4ED4112175F9 /* Debug */,
+				F6CC1E48C07F43D3AE307D7DD74397D2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		51F6BCB12EB3453500193743 /* Build configuration list for PBXNativeTarget "Good-Nap Watch App Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				51F6BCB22EB3453500193743 /* Debug */,
+				51F6BCB32EB3453500193743 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		51F6BCB52EB3453500193743 /* Build configuration list for PBXNativeTarget "Good-Nap Watch App Watch AppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				51F6BCB62EB3453500193743 /* Debug */,
+				51F6BCB72EB3453500193743 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		51F6BCB82EB3453500193743 /* Build configuration list for PBXNativeTarget "Good-Nap Watch App Watch AppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				51F6BCB92EB3453500193743 /* Debug */,
+				51F6BCBA2EB3453500193743 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		ECD87472D17C4AB1BACA50B1F5904041 /* Build configuration list for PBXNativeTarget "Good-Nap" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B6E1237EB012441498266905EB412179 /* Debug */,
+				55397D433B3543D3ADBE903FAA8A6C39 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
-};
-rootObject = 0B4E0F6B99CB45EF8B3CC20B8EB7B4F6 /* Project object */;
+	};
+	rootObject = 0B4E0F6B99CB45EF8B3CC20B8EB7B4F6 /* Project object */;
 }

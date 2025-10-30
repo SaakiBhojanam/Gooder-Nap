@@ -78,7 +78,7 @@ struct MLTrainingView: View {
                             }
                         }
                         .padding()
-                        .background(Color(.systemGray6))
+                        .background(Color.gray.opacity(0.15))
                         .cornerRadius(12)
                         .transition(.opacity.combined(with: .scale(scale: 0.95)))
                     }
@@ -124,7 +124,7 @@ struct MLTrainingView: View {
         .padding()
         .background(
             LinearGradient(
-                colors: [Color(.systemBackground), Color(.systemGray6)],
+                colors: [Color(white: 0.95), Color.gray.opacity(0.15)],
                 startPoint: .top,
                 endPoint: .bottom
             )
