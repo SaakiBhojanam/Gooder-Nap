@@ -219,21 +219,323 @@ struct HomeTab: View {
 }
 
 struct HistoryTab: View {
-    var body: some View {
-        VStack {
-            Text("Nap History")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-            
-            Text("Your previous nap sessions will appear here")
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding()
-            
-            Spacer()
+    private let sessions = NapSession.sampleData
+
+    private var averageEfficiency: Double {
+        let total = sessions.reduce(0) { $0 + $1.efficiency }
+        return total / Double(sessions.count)
+    }
+
+    private var averageOptimalAdjustment: Double {
+        let total = sessions.reduce(0) { $0 + Double($1.optimalWakeAdjustmentMinutes) }
+        return total / Double(sessions.count)
+    }
+
+    private var totalRestedHoursThisWeek: Double {
+        sessions.reduce(0) { total, session in
+            let hours = session.duration / 3600
+            return session.isFromCurrentWeek ? total + hours : total
         }
-        .padding()
+    }
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 28) {
+                header
+
+                SummaryHighlights(
+                    averageEfficiency: averageEfficiency,
+                    averageOptimalAdjustment: averageOptimalAdjustment,
+                    totalRestedHoursThisWeek: totalRestedHoursThisWeek
+                )
+
+                VStack(alignment: .leading, spacing: 18) {
+                    Text("Recent sessions")
+                        .font(.title3.weight(.semibold))
+
+                    VStack(spacing: 14) {
+                        ForEach(sessions) { session in
+                            NapHistoryCard(session: session)
+                        }
+                    }
+                }
+            }
+            .padding(.vertical, 24)
+            .padding(.horizontal, 20)
+        }
+        .background(Color(.systemGroupedBackground).ignoresSafeArea())
         .navigationTitle("History")
+    }
+
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Nap history")
+                .font(.system(size: 34, weight: .bold, design: .rounded))
+
+            Text("Optimized wake-ups based on your recent sessions")
+                .font(.callout)
+                .foregroundStyle(.secondary)
+
+            HStack(spacing: 10) {
+                Label("Synced", systemImage: "arrow.triangle.2.circlepath.circle")
+                Label("Watch insights", systemImage: "applewatch")
+            }
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+        }
+    }
+}
+
+struct NapSession: Identifiable {
+    let id = UUID()
+    let startDate: Date
+    let duration: TimeInterval
+    let optimalWakeAdjustmentMinutes: Int
+    let efficiency: Double
+    let restingHeartRate: Int
+    let hrvScore: Int
+    let cyclesCompleted: Double
+    let recoveryNote: String
+
+    var formattedDate: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEE, MMM d"
+        return formatter.string(from: startDate)
+    }
+
+    var formattedStartTime: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a"
+        return formatter.string(from: startDate)
+    }
+
+    var formattedDuration: String {
+        let totalMinutes = Int(duration / 60)
+        let hours = totalMinutes / 60
+        let minutes = totalMinutes % 60
+
+        if hours > 0 {
+            return "\(hours)h \(minutes)m"
+        } else {
+            return "\(minutes)m"
+        }
+    }
+
+    var formattedEfficiency: String {
+        "\(Int(efficiency * 100))%"
+    }
+
+    var cycleDescriptor: String {
+        String(format: "%.1f cycles", cyclesCompleted)
+    }
+
+    var isFromCurrentWeek: Bool {
+        Calendar.current.isDate(startDate, equalTo: Date(), toGranularity: .weekOfYear)
+    }
+}
+
+extension NapSession {
+    static let sampleData: [NapSession] = {
+        let calendar = Calendar.current
+        let now = Date()
+
+        func date(daysAgo: Int, hour: Int, minute: Int) -> Date {
+            let base = calendar.date(byAdding: .day, value: -daysAgo, to: now) ?? now
+            return calendar.date(bySettingHour: hour, minute: minute, second: 0, of: base) ?? now
+        }
+
+        return [
+            NapSession(
+                startDate: date(daysAgo: 1, hour: 13, minute: 5),
+                duration: 78 * 60,
+                optimalWakeAdjustmentMinutes: 6,
+                efficiency: 0.92,
+                restingHeartRate: 56,
+                hrvScore: 63,
+                cyclesCompleted: 1.3,
+                recoveryNote: "Woke at light sleep peak • felt clear within 2 min"
+            ),
+            NapSession(
+                startDate: date(daysAgo: 3, hour: 14, minute: 40),
+                duration: 90 * 60,
+                optimalWakeAdjustmentMinutes: 12,
+                efficiency: 0.88,
+                restingHeartRate: 58,
+                hrvScore: 57,
+                cyclesCompleted: 1.5,
+                recoveryNote: "REM exit detected early • wake-up eased grogginess"
+            ),
+            NapSession(
+                startDate: date(daysAgo: 5, hour: 12, minute: 20),
+                duration: 65 * 60,
+                optimalWakeAdjustmentMinutes: 4,
+                efficiency: 0.95,
+                restingHeartRate: 54,
+                hrvScore: 68,
+                cyclesCompleted: 1.1,
+                recoveryNote: "Short recovery nap • high HRV rebound"
+            ),
+            NapSession(
+                startDate: date(daysAgo: 8, hour: 16, minute: 10),
+                duration: 84 * 60,
+                optimalWakeAdjustmentMinutes: 9,
+                efficiency: 0.9,
+                restingHeartRate: 57,
+                hrvScore: 60,
+                cyclesCompleted: 1.4,
+                recoveryNote: "Motion spike from phone check • algorithm re-synced"
+            ),
+            NapSession(
+                startDate: date(daysAgo: 11, hour: 15, minute: 0),
+                duration: 72 * 60,
+                optimalWakeAdjustmentMinutes: 5,
+                efficiency: 0.93,
+                restingHeartRate: 55,
+                hrvScore: 65,
+                cyclesCompleted: 1.2,
+                recoveryNote: "Breathing steadied quickly • woke to gentle haptics"
+            )
+        ]
+    }()
+}
+
+struct SummaryHighlights: View {
+    let averageEfficiency: Double
+    let averageOptimalAdjustment: Double
+    let totalRestedHoursThisWeek: Double
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("This week")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(.secondary)
+
+            HStack(spacing: 16) {
+                SummaryTile(
+                    title: "Avg efficiency",
+                    value: "\(Int(averageEfficiency * 100))%",
+                    caption: "Aligned with circadian rhythm"
+                )
+
+                SummaryTile(
+                    title: "Wake adjustment",
+                    value: "\(Int(averageOptimalAdjustment)) min",
+                    caption: "Model shift before alarm"
+                )
+            }
+
+            SummaryTile(
+                title: "Rested time",
+                value: String(format: "%.1f h", totalRestedHoursThisWeek),
+                caption: "Optimized naps this week"
+            )
+        }
+        .padding(22)
+        .background(
+            RoundedRectangle(cornerRadius: 26, style: .continuous)
+                .fill(Color(.systemBackground).opacity(0.92))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 26, style: .continuous)
+                .strokeBorder(Color.white.opacity(0.2))
+        )
+    }
+}
+
+struct SummaryTile: View {
+    let title: String
+    let value: String
+    let caption: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(title)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            Text(value)
+                .font(.headline)
+
+            Text(caption)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .fill(Color(.secondarySystemBackground))
+        )
+    }
+}
+
+struct NapHistoryCard: View {
+    let session: NapSession
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(session.formattedDate)
+                    .font(.headline)
+                Spacer()
+                Text(session.formattedDuration)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+
+            HStack(spacing: 16) {
+                Label(session.formattedStartTime, systemImage: "clock")
+                Label("\(session.restingHeartRate) bpm", systemImage: "heart.fill")
+                Label("HRV \(session.hrvScore)", systemImage: "waveform.path.ecg")
+            }
+            .font(.caption)
+            .foregroundStyle(.secondary)
+
+            Divider()
+
+            HStack(spacing: 18) {
+                MetricPill(title: "Efficiency", value: session.formattedEfficiency, color: .green)
+                MetricPill(title: "Cycles", value: session.cycleDescriptor, color: .blue)
+                MetricPill(title: "Wake shift", value: "\(session.optimalWakeAdjustmentMinutes)m", color: .purple)
+            }
+
+            Text(session.recoveryNote)
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        }
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .fill(Color(.systemBackground))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .strokeBorder(Color.white.opacity(0.1))
+        )
+    }
+}
+
+struct MetricPill: View {
+    let title: String
+    let value: String
+    let color: Color
+
+    var body: some View {
+        VStack(spacing: 6) {
+            Text(title)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+
+            Text(value)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(color)
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal, 12)
+        .background(
+            Capsule()
+                .fill(color.opacity(0.12))
+        )
     }
 }
 
