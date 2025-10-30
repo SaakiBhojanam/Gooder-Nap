@@ -61,10 +61,13 @@ class WatchNapViewModel: ObservableObject {
         napSession = session
         currentState = .monitoring
         isMonitoring = true
-        
+        timeElapsed = 0
+        currentHeartRate = 0
+        currentSleepStage = .unknown
+
         // Start biometric monitoring
         biometricMonitor?.startMonitoring()
-        
+
         // Start timer for UI updates
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             self?.updateTimer()
@@ -85,10 +88,13 @@ class WatchNapViewModel: ObservableObject {
         Task {
             await sendFinalDataToiPhone()
         }
-        
+
         currentState = .ready
         napSession = nil
         WKExtension.shared().isAutorotating = true
+        currentHeartRate = 0
+        currentSleepStage = .unknown
+        timeElapsed = 0
     }
     
     func triggerAlarm() {
@@ -147,7 +153,7 @@ class WatchNapViewModel: ObservableObject {
         
         Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { timer in
             intensity += 1
-            
+
             switch intensity {
             case 1...3:
                 WKInterfaceDevice.current().play(.click)
@@ -158,5 +164,29 @@ class WatchNapViewModel: ObservableObject {
                 timer.invalidate()
             }
         }
+    }
+
+    var formattedElapsedTime: String {
+        TimeUtils.formatDuration(timeElapsed)
+    }
+
+    var formattedRemainingTime: String {
+        guard let session = napSession else { return "--" }
+        let remaining = max(session.targetDuration - timeElapsed, 0)
+        return TimeUtils.formatDuration(remaining)
+    }
+
+    var formattedTargetDuration: String {
+        guard let session = napSession else { return "--" }
+        return TimeUtils.formatDurationShort(session.targetDuration)
+    }
+
+    var sessionProgress: Double {
+        guard let session = napSession, session.targetDuration > 0 else { return 0 }
+        return min(timeElapsed / session.targetDuration, 1.0)
+    }
+
+    var hasActiveSession: Bool {
+        napSession != nil
     }
 }

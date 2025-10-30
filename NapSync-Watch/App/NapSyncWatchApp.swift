@@ -8,8 +8,9 @@ struct NapSyncWatchApp: App {
     @StateObject private var watchConnectivityService = WatchConnectivityService()
     @StateObject private var biometricMonitor = BiometricMonitor()
     
-    var body: some Scene {
-        WindowGroup {
+var body: some Scene {
+    WindowGroup {
+        NavigationStack {
             ContentView()
                 .environmentObject(watchHealthKitManager)
                 .environmentObject(watchConnectivityService)
@@ -17,13 +18,15 @@ struct NapSyncWatchApp: App {
         }
     }
 }
+}
 
 struct ContentView: View {
     @EnvironmentObject var watchHealthKitManager: WatchHealthKitManager
     @EnvironmentObject var watchConnectivityService: WatchConnectivityService
     @EnvironmentObject var biometricMonitor: BiometricMonitor
     @StateObject private var viewModel = WatchNapViewModel()
-    
+    @Environment(\.scenePhase) private var scenePhase
+
     var body: some View {
         Group {
             switch viewModel.currentState {
@@ -37,12 +40,35 @@ struct ContentView: View {
         }
         .environmentObject(viewModel)
         .onAppear {
-            viewModel.initialize(
-                healthKit: watchHealthKitManager,
-                connectivity: watchConnectivityService,
-                monitor: biometricMonitor
-            )
+            initializeDependenciesIfNeeded()
+            handleActivationEvents()
         }
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .active {
+                handleActivationEvents()
+            }
+        }
+        .onChange(of: watchConnectivityService.isReachable) { isReachable in
+            if isReachable {
+                watchConnectivityService.notifyCompanionReady()
+            }
+        }
+    }
+
+    private func initializeDependenciesIfNeeded() {
+        viewModel.initialize(
+            healthKit: watchHealthKitManager,
+            connectivity: watchConnectivityService,
+            monitor: biometricMonitor
+        )
+    }
+
+    private func handleActivationEvents() {
+        if !watchHealthKitManager.isAuthorized {
+            watchHealthKitManager.requestAuthorization()
+        }
+
+        watchConnectivityService.notifyCompanionReady()
     }
 }
 
