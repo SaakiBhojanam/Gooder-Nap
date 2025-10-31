@@ -18,8 +18,36 @@ class MockWatchConnectivityManager: ObservableObject {
 }
 
 class MockHomeViewModel: ObservableObject {
-    @Published var napDuration: TimeInterval = 1800 // 30 minutes
+    @Published var napDuration: TimeInterval = 1800 { // 30 minutes
+        didSet { refreshSoundscapePlan() }
+    }
     @Published var isNapping = false
+    @Published var isSoundscapeEnabled = false {
+        didSet { refreshSoundscapePlan() }
+    }
+    @Published var soundscapePlan: SoundscapePlan?
+    @Published var biometrics = SleepBiometrics(
+        restingHeartRate: 62,
+        heartRateVariability: 58,
+        respiratoryRate: 12.4,
+        microMovementIndex: 0.18
+    ) {
+        didSet { refreshSoundscapePlan() }
+    }
+
+    private let soundscapeService = SoundscapeService.shared
+
+    private func refreshSoundscapePlan() {
+        guard isSoundscapeEnabled else {
+            soundscapePlan = nil
+            return
+        }
+
+        soundscapePlan = soundscapeService.generatePlan(
+            napDuration: napDuration,
+            biometrics: biometrics
+        )
+    }
 }
 
 // MARK: - App Views
@@ -125,6 +153,10 @@ struct HomeTab: View {
 
                     controlPanel
 
+                    if homeViewModel.isSoundscapeEnabled, let plan = homeViewModel.soundscapePlan {
+                        SoundscapePlanCard(plan: plan)
+                    }
+
                     if homeViewModel.isNapping {
                         statusHighlights
                     }
@@ -178,6 +210,17 @@ struct HomeTab: View {
             Slider(value: $homeViewModel.napDuration, in: 600...5400, step: 300)
                 .tint(.blue)
 
+            Toggle(isOn: $homeViewModel.isSoundscapeEnabled) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Enable Soundscape wake-up")
+                        .font(.body.weight(.semibold))
+                    Text("Progressive alarm that layers gentle tones based on your biometrics.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .toggleStyle(CheckboxToggleStyle())
+
             Button(action: {
                 withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
                     homeViewModel.isNapping.toggle()
@@ -219,6 +262,168 @@ struct HomeTab: View {
         }
         .padding(22)
         .background(Color(.systemBackground).opacity(0.85), in: RoundedRectangle(cornerRadius: 26, style: .continuous))
+    }
+}
+
+struct SoundscapePlanCard: View {
+    let plan: SoundscapePlan
+
+    private var planEnd: TimeInterval {
+        plan.segments.map { $0.endOffset }.max() ?? 0
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            HStack(alignment: .top, spacing: 16) {
+                Image(systemName: "sunrise.fill")
+                    .font(.title2)
+                    .foregroundStyle(.yellow)
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Soundscape activated")
+                        .font(.title3.weight(.semibold))
+
+                    Text(plan.recommendationSummary)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                VStack(alignment: .trailing, spacing: 4) {
+                    Text(plan.wakeEaseRating)
+                        .font(.callout.weight(.semibold))
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .fill(Color(.systemYellow).opacity(0.25))
+                        )
+
+                    Text("Cortisol drop score \(Int(plan.cortisolReductionScore))")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            VStack(alignment: .leading, spacing: 12) {
+                Text(plan.ambientProfile.name)
+                    .font(.headline)
+                Text(plan.ambientProfile.description)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 10) {
+                        ForEach(plan.ambientProfile.dynamicElements, id: \.self) { element in
+                            Text(element.capitalized)
+                                .font(.caption.weight(.semibold))
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(
+                                    Capsule(style: .continuous)
+                                        .fill(Color.blue.opacity(0.15))
+                                )
+                        }
+                    }
+                }
+            }
+
+            Divider()
+
+            VStack(alignment: .leading, spacing: 14) {
+                Text("Wake-up ramp")
+                    .font(.subheadline.weight(.semibold))
+                    .textCase(.uppercase)
+                    .foregroundStyle(.secondary)
+
+                VStack(spacing: 12) {
+                    ForEach(plan.segments) { segment in
+                        SoundscapeSegmentRow(segment: segment, planEnd: planEnd)
+                    }
+                }
+            }
+        }
+        .padding(22)
+        .background(Color(.systemBackground).opacity(0.9), in: RoundedRectangle(cornerRadius: 26, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 26, style: .continuous)
+                .strokeBorder(Color(.systemYellow).opacity(0.25))
+        )
+    }
+}
+
+struct SoundscapeSegmentRow: View {
+    let segment: SoundscapeSegment
+    let planEnd: TimeInterval
+
+    private var minutesUntilWake: Int {
+        let minutes = max(planEnd - segment.startOffset, 0.0) / 60
+        return Int(round(minutes))
+    }
+
+    private var durationText: String {
+        let minutes = max(segment.duration / 60, 1.0)
+        return "\(Int(round(minutes))) min"
+    }
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 14) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(segment.label)
+                    .font(.body.weight(.semibold))
+                Text(segment.soundPalette)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+
+                Text(segment.coachingNote)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            VStack(alignment: .trailing, spacing: 4) {
+                Text(durationText)
+                    .font(.caption)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(
+                        Capsule(style: .continuous)
+                            .fill(Color(.systemGray5))
+                    )
+
+                Text("T-\(minutesUntilWake)m")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+
+                Text(segment.intensity)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .fill(Color(.secondarySystemBackground).opacity(0.9))
+        )
+    }
+}
+
+struct CheckboxToggleStyle: ToggleStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        Button(action: { configuration.isOn.toggle() }) {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: configuration.isOn ? "checkmark.square.fill" : "square")
+                    .font(.title3)
+                    .foregroundStyle(configuration.isOn ? Color.blue : Color.secondary)
+
+                configuration.label
+            }
+            .padding(.vertical, 4)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 }
 
