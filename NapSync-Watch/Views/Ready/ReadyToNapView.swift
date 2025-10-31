@@ -40,61 +40,59 @@ struct ReadyToNapView: View {
 
 struct MonitoringView: View {
     @EnvironmentObject var viewModel: WatchNapViewModel
-    
+
     var body: some View {
-        VStack(spacing: 15) {
-            // Status indicator
-            HStack {
+        VStack(spacing: 10) {
+            Text("Recording Data")
+                .font(.headline)
+                .fontWeight(.semibold)
+
+            HStack(spacing: 6) {
                 Circle()
                     .fill(Color.green)
-                    .frame(width: 8, height: 8)
-                
-                Text("Monitoring")
-                    .font(.caption)
+                    .frame(width: 6, height: 6)
+
+                Text("Live")
+                    .font(.caption2)
                     .foregroundColor(.green)
             }
-            
-            // Time elapsed
-            VStack(spacing: 5) {
-                Text(TimeUtils.formatDuration(viewModel.timeElapsed))
-                    .font(.title)
-                    .fontWeight(.light)
-                
-                Text("elapsed")
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
-            }
-            
-            // Heart rate
+
+            Text(TimeUtils.formatDuration(viewModel.timeElapsed))
+                .font(.title2)
+                .fontWeight(.medium)
+                .monospacedDigit()
+
+            Text("elapsed")
+                .font(.caption2)
+                .foregroundColor(.secondary)
+
             if viewModel.currentHeartRate > 0 {
-                HStack {
+                HStack(spacing: 4) {
                     Image(systemName: "heart.fill")
                         .foregroundColor(.red)
-                        .font(.caption)
-                    
+                        .font(.caption2)
+
                     Text("\(Int(viewModel.currentHeartRate)) BPM")
-                        .font(.caption)
+                        .font(.caption2)
                 }
             }
-            
-            // Sleep stage
+
             if viewModel.currentSleepStage != .unknown {
                 Text(viewModel.currentSleepStage.description)
                     .font(.caption2)
                     .foregroundColor(.blue)
             }
-            
-            Spacer()
-            
-            // Minimal interaction - just emergency stop
+
+            Spacer(minLength: 4)
+
             Button("Stop") {
                 viewModel.stopNapMonitoring()
             }
-            .font(.caption)
+            .font(.caption2)
             .foregroundColor(.red)
         }
-        .padding()
-        .digitalCrownRotation($viewModel.timeElapsed) // Allow crown scrolling to see time
+        .padding(.vertical, 12)
+        .padding(.horizontal, 10)
     }
 }
 
