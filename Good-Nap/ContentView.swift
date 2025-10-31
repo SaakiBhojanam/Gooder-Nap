@@ -22,53 +22,6 @@ class MockHomeViewModel: ObservableObject {
     @Published var isNapping = false
 }
 
-// MARK: - Minimal ML stubs to make this file compile standalone
-
-@MainActor
-final class MLModelService: ObservableObject {
-    static let shared = MLModelService()
-
-    @Published var isModelTrained: Bool = false
-
-    func initializeMLModels() {
-        // No-op stub for standalone build.
-        // In your app, kick off model loading/training here.
-    }
-}
-
-struct MLTrainingView: View {
-    @EnvironmentObject var mlModelService: MLModelService
-
-    var body: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "brain.head.profile")
-                .font(.system(size: 64))
-            Text("Training your sleep model…")
-                .font(.title3.weight(.semibold))
-            Text("This is a placeholder training screen so the sample compiles.")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
-
-            Button {
-                // Simulate training completion
-                mlModelService.isModelTrained = true
-            } label: {
-                Text("Finish Training")
-                    .font(.headline)
-                    .foregroundStyle(.white)
-                    .padding(.vertical, 12)
-                    .frame(maxWidth: .infinity)
-                    .background(Color.accentColor, in: Capsule())
-            }
-            .padding(.horizontal, 24)
-        }
-        .padding()
-        .navigationTitle("Model Training")
-    }
-}
-
 // MARK: - App Views
 
 enum AppView: Hashable {
@@ -270,7 +223,7 @@ struct HomeTab: View {
 }
 
 struct HistoryTab: View {
-    private let sessions = NapSession.sampleData
+    private let sessions = HistorySession.sampleData
 
     private var averageEfficiency: Double {
         let total = sessions.reduce(0) { $0 + $1.efficiency }
@@ -337,7 +290,7 @@ struct HistoryTab: View {
     }
 }
 
-struct NapSession: Identifiable {
+struct HistorySession: Identifiable {
     let id = UUID()
     let startDate: Date
     let duration: TimeInterval
@@ -385,8 +338,8 @@ struct NapSession: Identifiable {
     }
 }
 
-extension NapSession {
-    static let sampleData: [NapSession] = {
+extension HistorySession {
+    static let sampleData: [HistorySession] = {
         let calendar = Calendar.current
         let now = Date()
 
@@ -396,7 +349,7 @@ extension NapSession {
         }
 
         return [
-            NapSession(
+            HistorySession(
                 startDate: date(daysAgo: 1, hour: 13, minute: 5),
                 duration: 78 * 60,
                 optimalWakeAdjustmentMinutes: 6,
@@ -406,7 +359,7 @@ extension NapSession {
                 cyclesCompleted: 1.3,
                 recoveryNote: "Woke at light sleep peak • felt clear within 2 min"
             ),
-            NapSession(
+            HistorySession(
                 startDate: date(daysAgo: 3, hour: 14, minute: 40),
                 duration: 90 * 60,
                 optimalWakeAdjustmentMinutes: 12,
@@ -416,7 +369,7 @@ extension NapSession {
                 cyclesCompleted: 1.5,
                 recoveryNote: "REM exit detected early • wake-up eased grogginess"
             ),
-            NapSession(
+            HistorySession(
                 startDate: date(daysAgo: 5, hour: 12, minute: 20),
                 duration: 65 * 60,
                 optimalWakeAdjustmentMinutes: 4,
@@ -426,7 +379,7 @@ extension NapSession {
                 cyclesCompleted: 1.1,
                 recoveryNote: "Short recovery nap • high HRV rebound"
             ),
-            NapSession(
+            HistorySession(
                 startDate: date(daysAgo: 8, hour: 16, minute: 10),
                 duration: 84 * 60,
                 optimalWakeAdjustmentMinutes: 9,
@@ -436,7 +389,7 @@ extension NapSession {
                 cyclesCompleted: 1.4,
                 recoveryNote: "Motion spike from phone check • algorithm re-synced"
             ),
-            NapSession(
+            HistorySession(
                 startDate: date(daysAgo: 11, hour: 15, minute: 0),
                 duration: 72 * 60,
                 optimalWakeAdjustmentMinutes: 5,
@@ -521,7 +474,7 @@ struct SummaryTile: View {
 }
 
 struct NapHistoryCard: View {
-    let session: NapSession
+    let session: HistorySession
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
