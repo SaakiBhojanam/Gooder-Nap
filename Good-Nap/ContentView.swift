@@ -19,13 +19,18 @@ class MockWatchConnectivityManager: ObservableObject {
 
 class MockHomeViewModel: ObservableObject {
     @Published var napDuration: TimeInterval = 1800 { // 30 minutes
-        didSet { refreshSoundscapePlan() }
+        didSet {
+            guard !isNapping else { return }
+            remainingNapTime = napDuration
+            refreshSoundscapePlan()
+        }
     }
-    @Published var isNapping = false
+    @Published private(set) var isNapping = false
     @Published var isSoundscapeEnabled = false {
         didSet { refreshSoundscapePlan() }
     }
     @Published var soundscapePlan: SoundscapePlan?
+    @Published var remainingNapTime: TimeInterval = 1800
     @Published var biometrics = SleepBiometrics(
         restingHeartRate: 62,
         heartRateVariability: 58,
@@ -36,6 +41,7 @@ class MockHomeViewModel: ObservableObject {
     }
 
     private let soundscapeService = SoundscapeService.shared
+    private var napTimer: Timer?
 
     private func refreshSoundscapePlan() {
         guard isSoundscapeEnabled else {
@@ -47,6 +53,48 @@ class MockHomeViewModel: ObservableObject {
             napDuration: napDuration,
             biometrics: biometrics
         )
+    }
+
+    func toggleNapState() {
+        if isNapping {
+            endNap()
+        } else {
+            startNap()
+        }
+    }
+
+    private func startNap() {
+        napTimer?.invalidate()
+        remainingNapTime = napDuration
+        isNapping = true
+        refreshSoundscapePlan()
+
+        let timer = Timer(timeInterval: 1.0, repeats: true) { [weak self] timer in
+            guard let self else {
+                timer.invalidate()
+                return
+            }
+
+            if self.remainingNapTime > 1 {
+                self.remainingNapTime -= 1
+            } else {
+                self.remainingNapTime = 0
+                timer.invalidate()
+                self.napTimer = nil
+                self.endNap()
+            }
+        }
+
+        RunLoop.main.add(timer, forMode: .common)
+        napTimer = timer
+    }
+
+    private func endNap() {
+        napTimer?.invalidate()
+        napTimer = nil
+        isNapping = false
+        remainingNapTime = napDuration
+        refreshSoundscapePlan()
     }
 }
 
@@ -146,7 +194,8 @@ struct HomeTab: View {
                     NapCycleTrackerView(
                         napDuration: homeViewModel.napDuration,
                         isNapping: homeViewModel.isNapping,
-                        isModelTrained: mlModelService.isModelTrained
+                        isModelTrained: mlModelService.isModelTrained,
+                        remainingTime: homeViewModel.remainingNapTime
                     )
 
                     WatchPreviewCard(isConnected: watchConnectivityManager.isConnected)
@@ -209,6 +258,7 @@ struct HomeTab: View {
 
             Slider(value: $homeViewModel.napDuration, in: 600...5400, step: 300)
                 .tint(.blue)
+                .disabled(homeViewModel.isNapping)
 
             Toggle(isOn: $homeViewModel.isSoundscapeEnabled) {
                 VStack(alignment: .leading, spacing: 4) {
@@ -223,7 +273,7 @@ struct HomeTab: View {
 
             Button(action: {
                 withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
-                    homeViewModel.isNapping.toggle()
+                    homeViewModel.toggleNapState()
                 }
             }) {
                 Text(homeViewModel.isNapping ? "End Optimized Nap" : "Begin Optimized Nap")
@@ -767,6 +817,7 @@ struct NapCycleTrackerView: View {
     let napDuration: TimeInterval
     let isNapping: Bool
     let isModelTrained: Bool
+    let remainingTime: TimeInterval
 
     private var segments: [Segment] {
         [
@@ -794,6 +845,14 @@ struct NapCycleTrackerView: View {
 
     private var cycleCount: Int {
         max(1, Int(ceil(napDuration / (90 * 60))))
+    }
+
+    private var countdownString: String {
+        let clampedTime = max(remainingTime, 0)
+        let totalSeconds = Int(clampedTime.rounded(.down))
+        let minutes = totalSeconds / 60
+        let seconds = totalSeconds % 60
+        return String(format: "%02d:%02d", minutes, seconds)
     }
 
     var body: some View {
@@ -831,12 +890,21 @@ struct NapCycleTrackerView: View {
                     .frame(width: 160, height: 160)
                     .overlay(
                         VStack(spacing: 8) {
-                            Text(isNapping ? "Optimal wake window" : "Ready for next nap")
+                            Text(isNapping ? "Time remaining" : "Optimal wake window")
                                 .font(.footnote)
                                 .foregroundStyle(.secondary)
 
-                            Text("≈ \(optimalWakeMinutes) min")
+                            Text(isNapping ? countdownString : "≈ \(optimalWakeMinutes) min")
                                 .font(.system(size: 36, weight: .bold, design: .rounded))
+                                .monospacedDigit()
+
+                            if isNapping {
+                                Text("Adaptive wake monitoring active")
+                                    .font(.caption2)
+                                    .multilineTextAlignment(.center)
+                                    .foregroundStyle(.secondary)
+                                    .padding(.horizontal, 8)
+                            }
 
                             Capsule()
                                 .fill(isModelTrained ? Color.green.opacity(0.85) : Color.orange.opacity(0.85))
