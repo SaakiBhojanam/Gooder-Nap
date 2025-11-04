@@ -27,11 +27,21 @@ class AlarmService: ObservableObject {
             print("Alarm sound file not found")
             return
         }
-        
+
         do {
+            let audioSession = AVAudioSession.sharedInstance()
+            do {
+                try audioSession.setCategory(.playback, mode: .default, options: [.duckOthers])
+                try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+            } catch {
+                print("Failed to configure audio session: \(error)")
+                return
+            }
+
             audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
             audioPlayer?.numberOfLoops = -1 // Loop indefinitely
             audioPlayer?.volume = 0.3 // Start at low volume
+            audioPlayer?.prepareToPlay()
             audioPlayer?.play()
         } catch {
             print("Failed to play alarm sound: \(error)")
@@ -76,6 +86,7 @@ class AlarmService: ObservableObject {
         audioPlayer?.stop()
         audioPlayer = nil
         hapticManager.stopFeedback()
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 }
 
