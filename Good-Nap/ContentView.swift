@@ -898,6 +898,74 @@ struct AnalyticsTab: View {
                 }
 
                 AnalyticsSectionCard(
+                    title: "Nap duration & quality",
+                    subtitle: "Comparing time asleep with recovery score"
+                ) {
+                    Chart {
+                        ForEach(analytics.orderedSessions) { session in
+                            BarMark(
+                                x: .value("Day", session.date, unit: .day),
+                                y: .value("Duration", session.duration / 60)
+                            )
+                            .foregroundStyle(Color.cyan.opacity(0.35))
+                            .cornerRadius(8)
+                        }
+
+                        ForEach(analytics.orderedSessions) { session in
+                            LineMark(
+                                x: .value("Day", session.date, unit: .day),
+                                y: .value("Quality", session.sleepQualityScore)
+                            )
+                            .interpolationMethod(.catmullRom)
+                            .foregroundStyle(Color.purple)
+                            .lineStyle(StrokeStyle(lineWidth: 2.5))
+
+                            PointMark(
+                                x: .value("Day", session.date, unit: .day),
+                                y: .value("Quality", session.sleepQualityScore)
+                            )
+                            .symbolSize(60)
+                            .foregroundStyle(Color.purple)
+                            .annotation(position: .top) {
+                                Text("\(session.sleepQualityScore)")
+                                    .font(.caption2.weight(.semibold))
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(Color.purple.opacity(0.12), in: Capsule())
+                            }
+                        }
+
+                        RuleMark(y: .value("Goal", 85))
+                            .lineStyle(StrokeStyle(lineWidth: 1, dash: [5, 4]))
+                            .foregroundStyle(Color.secondary)
+                            .annotation(position: .topLeading) {
+                                Text("Target score 85")
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
+                    }
+                    .chartYAxis {
+                        AxisMarks(position: .leading) { value in
+                            AxisGridLine()
+                            AxisValueLabel {
+                                if let doubleValue = value.as(Double.self) {
+                                    Text("\(Int(doubleValue))")
+                                }
+                            }
+                        }
+                    }
+                    .chartYAxisLabel("Minutes (bars) & score (line)")
+                    .chartXAxis {
+                        AxisMarks(values: .stride(by: .day)) { value in
+                            AxisGridLine()
+                            AxisValueLabel(format: .dateTime.weekday(.abbreviated))
+                        }
+                    }
+                    .chartYScale(domain: 60...100)
+                    .frame(height: 240)
+                }
+
+                AnalyticsSectionCard(
                     title: "Recovery readiness",
                     subtitle: "Heart rate and variability captured during naps"
                 ) {

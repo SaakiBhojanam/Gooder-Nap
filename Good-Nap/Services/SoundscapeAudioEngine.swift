@@ -40,8 +40,10 @@ final class SoundscapeAudioEngine {
         isPreviewMode = preview
 
         cancelScheduledSegments()
-        startEngineIfNeeded()
-        configureAudioSession()
+        prepareEngineForPlayback()
+
+        guard engine.isRunning else { return }
+
         startBaseLayersIfNeeded()
 
         ambientTargetVolume = preview ? 0.16 : 0.12
@@ -121,9 +123,24 @@ final class SoundscapeAudioEngine {
         }
     }
 
+    private func prepareEngineForPlayback() {
+        attachNodesIfNeeded()
+        connectNodes()
+        configureAudioSession()
+        startEngineIfNeeded()
+    }
+
+    private func attachNodesIfNeeded() {
+        let nodes: [AVAudioNode] = [ambientNode, harmonicNode, shimmerNode, reverb]
+        for node in nodes where !engine.attachedNodes.contains(node) {
+            engine.attach(node)
+        }
+    }
+
     private func startEngineIfNeeded() {
         if engine.isRunning { return }
         do {
+            engine.prepare()
             try engine.start()
         } catch {
             print("Failed to start AVAudioEngine: \(error)")
@@ -131,6 +148,12 @@ final class SoundscapeAudioEngine {
     }
 
     private func startBaseLayersIfNeeded() {
+        if !engine.isRunning {
+            startEngineIfNeeded()
+        }
+
+        guard engine.isRunning else { return }
+
         if ambientBuffer == nil {
             ambientBuffer = Self.makeBrownNoiseBuffer(duration: 2.5, amplitude: 0.35)
         }
