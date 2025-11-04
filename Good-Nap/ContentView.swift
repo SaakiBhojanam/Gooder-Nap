@@ -174,9 +174,9 @@ struct ContentView: View {
 // MARK: - Tab Views
 
 struct HomeTab: View {
-    @EnvironmentObject var homeViewModel: MockHomeViewModel
-    @EnvironmentObject var mlModelService: MLModelService
-    @EnvironmentObject var watchConnectivityManager: MockWatchConnectivityManager
+    @EnvironmentObject private var homeViewModel: MockHomeViewModel
+    @EnvironmentObject private var mlModelService: MLModelService
+    @EnvironmentObject private var watchConnectivityManager: MockWatchConnectivityManager
 
     private var isPremiumReady: Bool {
         mlModelService.isModelTrained && homeViewModel.isNapping
@@ -269,7 +269,7 @@ struct HomeTab: View {
                         .foregroundStyle(.secondary)
                 }
             }
-            .toggleStyle(CheckboxToggleStyle())
+            .toggleStyle(CustomCheckboxToggleStyle())
 
             Button(action: {
                 withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
@@ -311,17 +311,107 @@ struct HomeTab: View {
             )
         }
         .padding(22)
-        .background(Color(.systemBackground).opacity(0.85), in: RoundedRectangle(cornerRadius: 26, style: .continuous))
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 28, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .strokeBorder(.white.opacity(0.2))
+        )
+    }
+}
+
+struct HighlightRow: View {
+    let icon: String
+    let title: String
+    let detail: String
+    
+    var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundStyle(.blue)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.body.weight(.semibold))
+                Text(detail)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+            
+            Spacer()
+        }
+    }
+}
+
+struct NapCycleTrackerView: View {
+    let napDuration: TimeInterval
+    let isNapping: Bool
+    let isModelTrained: Bool
+    let remainingTime: TimeInterval
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Text("Nap Cycle Tracker")
+                    .font(.title3.weight(.semibold))
+                Spacer()
+                Text(isNapping ? "Active" : "Ready")
+                    .font(.caption)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(isNapping ? Color.green : Color.blue, in: Capsule())
+                    .foregroundColor(.white)
+            }
+            
+            if isNapping {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Remaining: \(Int(remainingTime / 60))m \(Int(remainingTime.truncatingRemainder(dividingBy: 60)))s")
+                        .font(.headline)
+                    
+                    ProgressView(value: (napDuration - remainingTime) / napDuration)
+                        .progressViewStyle(LinearProgressViewStyle(tint: .blue))
+                }
+            } else {
+                Text("Duration: \(Int(napDuration / 60)) minutes")
+                    .font(.headline)
+            }
+        }
+        .padding(20)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+    }
+}
+
+struct WatchPreviewCard: View {
+    let isConnected: Bool
+    
+    var body: some View {
+        HStack {
+            Image(systemName: "applewatch")
+                .font(.title2)
+                .foregroundStyle(isConnected ? .green : .gray)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Apple Watch")
+                    .font(.headline)
+                Text(isConnected ? "Connected" : "Not Connected")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            
+            Spacer()
+        }
+        .padding(16)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 }
 
 struct SoundscapePlanCard: View {
     let plan: SoundscapePlan
-
+    
     private var planEnd: TimeInterval {
-        plan.segments.map { $0.endOffset }.max() ?? 0
+        plan.segments.map { $0.startOffset + $0.duration }.max() ?? 0
     }
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             HStack(alignment: .top, spacing: 16) {
@@ -460,7 +550,7 @@ struct SoundscapeSegmentRow: View {
     }
 }
 
-struct CheckboxToggleStyle: ToggleStyle {
+struct CustomCheckboxToggleStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
         Button(action: { configuration.isOn.toggle() }) {
             HStack(alignment: .top, spacing: 12) {
@@ -612,832 +702,254 @@ extension HistorySession {
                 restingHeartRate: 56,
                 hrvScore: 63,
                 cyclesCompleted: 1.3,
-                recoveryNote: "Woke at light sleep peak • felt clear within 2 min"
+                recoveryNote: "Excellent recovery"
             ),
             HistorySession(
-                startDate: date(daysAgo: 3, hour: 14, minute: 40),
-                duration: 90 * 60,
-                optimalWakeAdjustmentMinutes: 12,
+                startDate: date(daysAgo: 2, hour: 14, minute: 20),
+                duration: 45 * 60,
+                optimalWakeAdjustmentMinutes: 3,
                 efficiency: 0.88,
                 restingHeartRate: 58,
-                hrvScore: 57,
-                cyclesCompleted: 1.5,
-                recoveryNote: "REM exit detected early • wake-up eased grogginess"
+                hrvScore: 61,
+                cyclesCompleted: 0.9,
+                recoveryNote: "Good rest"
             ),
             HistorySession(
-                startDate: date(daysAgo: 5, hour: 12, minute: 20),
-                duration: 65 * 60,
-                optimalWakeAdjustmentMinutes: 4,
+                startDate: date(daysAgo: 3, hour: 15, minute: 10),
+                duration: 60 * 60,
+                optimalWakeAdjustmentMinutes: 8,
                 efficiency: 0.95,
                 restingHeartRate: 54,
-                hrvScore: 68,
-                cyclesCompleted: 1.1,
-                recoveryNote: "Short recovery nap • high HRV rebound"
-            ),
-            HistorySession(
-                startDate: date(daysAgo: 8, hour: 16, minute: 10),
-                duration: 84 * 60,
-                optimalWakeAdjustmentMinutes: 9,
-                efficiency: 0.9,
-                restingHeartRate: 57,
-                hrvScore: 60,
-                cyclesCompleted: 1.4,
-                recoveryNote: "Motion spike from phone check • algorithm re-synced"
-            ),
-            HistorySession(
-                startDate: date(daysAgo: 11, hour: 15, minute: 0),
-                duration: 72 * 60,
-                optimalWakeAdjustmentMinutes: 5,
-                efficiency: 0.93,
-                restingHeartRate: 55,
                 hrvScore: 65,
                 cyclesCompleted: 1.2,
-                recoveryNote: "Breathing steadied quickly • woke to gentle haptics"
+                recoveryNote: "Very refreshing"
             )
         ]
     }()
+}
+
+// MARK: - Missing Tab Views
+
+struct AnalyticsTab: View {
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                Text("Analytics")
+                    .font(.system(size: 34, weight: .bold, design: .rounded))
+                    .padding(.horizontal, 20)
+                
+                Text("Sleep analytics and insights coming soon")
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 20)
+            }
+            .padding(.vertical, 24)
+        }
+        .background(Color(.systemGroupedBackground).ignoresSafeArea())
+        .navigationTitle("Analytics")
+    }
+}
+
+struct SettingsTab: View {
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                Text("Settings")
+                    .font(.system(size: 34, weight: .bold, design: .rounded))
+                    .padding(.horizontal, 20)
+                
+                Text("App settings and preferences coming soon")
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 20)
+            }
+            .padding(.vertical, 24)
+        }
+        .background(Color(.systemGroupedBackground).ignoresSafeArea())
+        .navigationTitle("Settings")
+    }
 }
 
 struct SummaryHighlights: View {
     let averageEfficiency: Double
     let averageOptimalAdjustment: Double
     let totalRestedHoursThisWeek: Double
-
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("This week")
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(.secondary)
-
+        VStack(spacing: 16) {
             HStack(spacing: 16) {
-                SummaryTile(
-                    title: "Avg efficiency",
+                SummaryCard(
+                    title: "Avg Efficiency",
                     value: "\(Int(averageEfficiency * 100))%",
-                    caption: "Aligned with circadian rhythm"
+                    icon: "chart.line.uptrend.xyaxis"
                 )
-
-                SummaryTile(
-                    title: "Wake adjustment",
-                    value: "\(Int(averageOptimalAdjustment)) min",
-                    caption: "Model shift before alarm"
+                
+                SummaryCard(
+                    title: "Optimal Adjustment",
+                    value: "\(Int(averageOptimalAdjustment))m",
+                    icon: "clock.arrow.circlepath"
                 )
             }
-
-            SummaryTile(
-                title: "Rested time",
-                value: String(format: "%.1f h", totalRestedHoursThisWeek),
-                caption: "Optimized naps this week"
+            
+            SummaryCard(
+                title: "Weekly Rest Hours",
+                value: "\(String(format: "%.1f", totalRestedHoursThisWeek))h",
+                icon: "moon.zzz.fill"
             )
         }
-        .padding(22)
-        .background(
-            RoundedRectangle(cornerRadius: 26, style: .continuous)
-                .fill(Color(.systemBackground).opacity(0.92))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 26, style: .continuous)
-                .strokeBorder(Color.white.opacity(0.2))
-        )
     }
 }
 
-struct SummaryTile: View {
+struct SummaryCard: View {
     let title: String
     let value: String
-    let caption: String
-
+    let icon: String
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Image(systemName: icon)
+                    .font(.title3)
+                    .foregroundStyle(.blue)
+                Spacer()
+            }
+            
+            Text(value)
+                .font(.title2.weight(.bold))
+            
             Text(title)
                 .font(.caption)
-                .foregroundStyle(.secondary)
-
-            Text(value)
-                .font(.headline)
-
-            Text(caption)
-                .font(.caption2)
                 .foregroundStyle(.secondary)
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(Color(.secondarySystemBackground))
-        )
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 }
 
 struct NapHistoryCard: View {
     let session: HistorySession
-
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack(alignment: .firstTextBaseline) {
-                Text(session.formattedDate)
-                    .font(.headline)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(session.formattedDate)
+                        .font(.headline)
+                    Text("\(session.formattedStartTime) • \(session.formattedDuration)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                
                 Spacer()
-                Text(session.formattedDuration)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                
+                VStack(alignment: .trailing, spacing: 4) {
+                    Text(session.formattedEfficiency)
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(.green)
+                    Text("efficiency")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
-
+            
             HStack(spacing: 16) {
-                Label(session.formattedStartTime, systemImage: "clock")
-                Label("\(session.restingHeartRate) bpm", systemImage: "heart.fill")
+                Label("\(session.restingHeartRate) BPM", systemImage: "heart.fill")
                 Label("HRV \(session.hrvScore)", systemImage: "waveform.path.ecg")
+                Label(session.cycleDescriptor, systemImage: "moon.circle.fill")
             }
             .font(.caption)
             .foregroundStyle(.secondary)
-
-            Divider()
-
-            HStack(spacing: 18) {
-                MetricPill(title: "Efficiency", value: session.formattedEfficiency, color: .green)
-                MetricPill(title: "Cycles", value: session.cycleDescriptor, color: .blue)
-                MetricPill(title: "Wake shift", value: "\(session.optimalWakeAdjustmentMinutes)m", color: .purple)
+            
+            if session.optimalWakeAdjustmentMinutes != 0 {
+                Text("Woke \(abs(session.optimalWakeAdjustmentMinutes))m \(session.optimalWakeAdjustmentMinutes > 0 ? "after" : "before") optimal time")
+                    .font(.footnote)
+                    .foregroundStyle(session.optimalWakeAdjustmentMinutes > 0 ? .orange : .green)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .fill((session.optimalWakeAdjustmentMinutes > 0 ? Color.orange : Color.green).opacity(0.1))
+                    )
             }
-
+            
             Text(session.recoveryNote)
                 .font(.footnote)
                 .foregroundStyle(.secondary)
         }
-        .padding(20)
-        .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(Color(.systemBackground))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .strokeBorder(Color.white.opacity(0.1))
-        )
-    }
-}
-
-struct MetricPill: View {
-    let title: String
-    let value: String
-    let color: Color
-
-    var body: some View {
-        VStack(spacing: 6) {
-            Text(title)
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-
-            Text(value)
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(color)
-        }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 12)
-        .background(
-            Capsule()
-                .fill(color.opacity(0.12))
-        )
-    }
-}
-
-struct NapCycleTrackerView: View {
-    struct Segment: Identifiable {
-        let id = UUID()
-        let title: String
-        let ratio: Double
-        let color: Color
-        let systemIcon: String
-    }
-
-    private struct SegmentRange: Identifiable {
-        let id = UUID()
-        let segment: Segment
-        let start: Double
-        let end: Double
-    }
-
-    let napDuration: TimeInterval
-    let isNapping: Bool
-    let isModelTrained: Bool
-    let remainingTime: TimeInterval
-
-    private var segments: [Segment] {
-        [
-            Segment(title: "Light", ratio: 0.32, color: Color.cyan, systemIcon: "cloud.moon.fill"),
-            Segment(title: "Deep", ratio: 0.26, color: Color.blue, systemIcon: "moon.zzz.fill"),
-            Segment(title: "REM", ratio: 0.24, color: Color.purple, systemIcon: "sparkles"),
-            Segment(title: "Wake", ratio: 0.18, color: Color.pink, systemIcon: "sunrise.fill")
-        ]
-    }
-
-    private var segmentRanges: [SegmentRange] {
-        var current: Double = 0
-        return segments.map { segment in
-            let end = current + segment.ratio
-            defer { current = end }
-            return SegmentRange(segment: segment, start: current, end: end)
-        }
-    }
-
-    private var optimalWakeMinutes: Int {
-        let minutes = napDuration / 60
-        let wakeOffset = minutes * 0.88
-        return max(10, Int(wakeOffset.rounded()))
-    }
-
-    private var cycleCount: Int {
-        max(1, Int(ceil(napDuration / (90 * 60))))
-    }
-
-    private var countdownString: String {
-        let clampedTime = max(remainingTime, 0)
-        let totalSeconds = Int(clampedTime.rounded(.down))
-        let minutes = totalSeconds / 60
-        let seconds = totalSeconds % 60
-        return String(format: "%02d:%02d", minutes, seconds)
-    }
-
-    var body: some View {
-        VStack(spacing: 24) {
-            ZStack {
-                Circle()
-                    .fill(.linearGradient(colors: [Color(.systemBackground), Color(.systemBackground).opacity(0.65)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                    .frame(width: 250, height: 250)
-                    .shadow(color: Color(.systemGray4), radius: 24, x: 0, y: 18)
-
-                Circle()
-                    .stroke(Color.white.opacity(0.15), lineWidth: 24)
-                    .frame(width: 250, height: 250)
-
-                ForEach(segmentRanges) { range in
-                    Circle()
-                        .trim(from: range.start, to: range.end)
-                        .stroke(
-                            AngularGradient(colors: [range.segment.color.opacity(0.6), range.segment.color], center: .center),
-                            style: StrokeStyle(lineWidth: 22, lineCap: .round)
-                        )
-                        .rotationEffect(.degrees(-90))
-                        .frame(width: 250, height: 250)
-                        .overlay(
-                            Circle()
-                                .trim(from: range.start, to: range.end)
-                                .stroke(range.segment.color.opacity(0.25), lineWidth: 2)
-                                .rotationEffect(.degrees(-90))
-                                .frame(width: 260, height: 260)
-                        )
-                }
-
-                Circle()
-                    .fill(.ultraThinMaterial)
-                    .frame(width: 160, height: 160)
-                    .overlay(
-                        VStack(spacing: 8) {
-                            Text(isNapping ? "Time remaining" : "Optimal wake window")
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-
-                            Text(isNapping ? countdownString : "≈ \(optimalWakeMinutes) min")
-                                .font(.system(size: 36, weight: .bold, design: .rounded))
-                                .monospacedDigit()
-
-                            if isNapping {
-                                Text("Adaptive wake monitoring active")
-                                    .font(.caption2)
-                                    .multilineTextAlignment(.center)
-                                    .foregroundStyle(.secondary)
-                                    .padding(.horizontal, 8)
-                            }
-
-                            Capsule()
-                                .fill(isModelTrained ? Color.green.opacity(0.85) : Color.orange.opacity(0.85))
-                                .frame(width: 108, height: 28)
-                                .overlay(
-                                    HStack(spacing: 6) {
-                                        Image(systemName: isModelTrained ? "cpu.fill" : "bolt.horizontal.circle")
-                                        Text(isModelTrained ? "Adaptive" : "Calibrating")
-                                    }
-                                    .font(.caption.weight(.semibold))
-                                    .foregroundStyle(.white)
-                                )
-                        }
-                    )
-
-                Circle()
-                    .strokeBorder(Color.white.opacity(0.3), lineWidth: 1.5)
-                    .frame(width: 162, height: 162)
-            }
-            .frame(maxWidth: .infinity)
-
-            HStack(alignment: .top, spacing: 18) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Cycles planned")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Text("\(cycleCount) cycle\(cycleCount > 1 ? "s" : "")")
-                        .font(.headline)
-                }
-
-                Divider()
-                    .frame(height: 40)
-
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Next wake target")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Text(isNapping ? "Calculating in real time" : "Will adapt when nap starts")
-                        .font(.headline)
-                        .foregroundStyle(isNapping ? .primary : .secondary)
-                }
-
-                Spacer()
-            }
-
-            PhaseLegend(segments: segments)
-        }
-        .padding(24)
-        .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 32, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 32, style: .continuous)
-                .strokeBorder(Color.white.opacity(0.18))
-        )
-    }
-}
-
-struct PhaseLegend: View {
-    let segments: [NapCycleTrackerView.Segment]
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Nap cycle flow")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-
-            HStack(spacing: 12) {
-                ForEach(segments) { segment in
-                    HStack(spacing: 6) {
-                        Image(systemName: segment.systemIcon)
-                            .font(.caption)
-                            .foregroundStyle(segment.color)
-                        Text(segment.title)
-                            .font(.footnote.weight(.medium))
-                    }
-                    .padding(.vertical, 6)
-                    .padding(.horizontal, 10)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .fill(segment.color.opacity(0.12))
-                    )
-                }
-            }
-        }
-    }
-}
-
-struct WatchPreviewCard: View {
-    let isConnected: Bool
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            Text("Apple Watch companion")
-                .font(.headline)
-
-            HStack(spacing: 22) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 26, style: .continuous)
-                        .fill(Color(.black))
-                        .frame(width: 140, height: 180)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                                .inset(by: 4)
-                                .stroke(Color.gray.opacity(0.2), lineWidth: 4)
-                        )
-
-                    VStack(spacing: 14) {
-                        Text("NapSync")
-                            .font(.caption2)
-                            .foregroundColor(.white.opacity(0.7))
-
-                        VStack(spacing: 6) {
-                            Text("Cycle active")
-                                .font(.footnote.weight(.medium))
-                                .foregroundColor(.white)
-                            Text("REM drop in 8 min")
-                                .font(.caption2)
-                                .foregroundColor(.white.opacity(0.6))
-                        }
-
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .fill(
-                                LinearGradient(colors: [.purple, .blue], startPoint: .top, endPoint: .bottom)
-                            )
-                            .frame(width: 90, height: 24)
-                            .overlay(
-                                Text("Wake window")
-                                    .font(.caption2.weight(.semibold))
-                                    .foregroundStyle(.white)
-                            )
-
-                        HStack(spacing: 12) {
-                            Label("58 bpm", systemImage: "heart.fill")
-                                .font(.caption2)
-                                .foregroundColor(.white.opacity(0.85))
-
-                            Circle()
-                                .fill(Color.green)
-                                .frame(width: 6, height: 6)
-                        }
-                    }
-                }
-
-                VStack(alignment: .leading, spacing: 12) {
-                    Label(isConnected ? "Connected" : "Awaiting sync", systemImage: isConnected ? "dot.radiowaves.left.and.right" : "exclamationmark.triangle.fill")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(isConnected ? Color.green : Color.orange)
-
-                    Text("Your watch detects micro-adjustments in heart rate variability to predict your wake-ready window.")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-
-                    Divider()
-
-                    HStack(spacing: 12) {
-                        Label("Motion AI", systemImage: "waveform.path")
-                        Label("HRV", systemImage: "heart.text.square")
-                        Label("O2", systemImage: "lungs.fill")
-                    }
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-                }
-            }
-        }
-        .padding(24)
-        .background(Color(.systemBackground).opacity(0.9), in: RoundedRectangle(cornerRadius: 30, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 30, style: .continuous)
-                .strokeBorder(Color.white.opacity(0.15))
-        )
-    }
-}
-
-struct HighlightRow: View {
-    let icon: String
-    let title: String
-    let detail: String
-
-    var body: some View {
-        HStack(alignment: .top, spacing: 16) {
-            ZStack {
-                Circle()
-                    .fill(Color.blue.opacity(0.12))
-                    .frame(width: 42, height: 42)
-                Image(systemName: icon)
-                    .foregroundStyle(Color.blue)
-            }
-
-            VStack(alignment: .leading, spacing: 6) {
-                Text(title)
-                    .font(.subheadline.weight(.semibold))
-                Text(detail)
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
-            Spacer()
-        }
-    }
-}
-
-struct AnalyticsTab: View {
-    private let heartRateValues: [Double] = [58, 56, 54, 52, 53, 55, 57, 60, 62, 61, 59]
-    private let sleepDepthValues: [Double] = [0.2, 0.5, 0.7, 0.9, 0.85, 0.6, 0.4, 0.3, 0.45, 0.8, 0.95]
-    private let motionValues: [Double] = [0.1, 0.14, 0.18, 0.12, 0.09, 0.05, 0.04, 0.07, 0.11, 0.16, 0.2]
-
-    private var columns: [GridItem] {
-        [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)]
-    }
-
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 26) {
-                Text("Analytics")
-                    .font(.system(size: 32, weight: .bold, design: .rounded))
-
-                Text("Real-time biometrics and predictive models tuned to your latest nap session.")
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-
-                AnalyticsGraphCard(
-                    title: "Heart rate variability",
-                    subtitle: "Averaged over the current nap window",
-                    metric: "\(Int(heartRateValues.last ?? 0)) bpm",
-                    changeDescription: "Stable within optimal recovery zone",
-                    values: heartRateValues,
-                    gradient: Gradient(colors: [.green.opacity(0.5), .green])
-                )
-
-                AnalyticsGraphCard(
-                    title: "Sleep depth",
-                    subtitle: "Light → Deep → REM progression",
-                    metric: "REM approaching",
-                    changeDescription: "Wake target recalibrated +2 min",
-                    values: sleepDepthValues,
-                    gradient: Gradient(colors: [.blue.opacity(0.4), .purple])
-                )
-
-                AnalyticsGraphCard(
-                    title: "Micro-motion",
-                    subtitle: "Watch accelerometer drift",
-                    metric: "Low activity",
-                    changeDescription: "Body settled • arousal unlikely",
-                    values: motionValues,
-                    gradient: Gradient(colors: [.cyan.opacity(0.4), .indigo])
-                )
-
-                LiveProcessingCard()
-
-                LazyVGrid(columns: columns, spacing: 16) {
-                    MetricTile(title: "Respiration", value: "12.4", unit: "breaths/min", trend: "Down 3%", color: .teal)
-                    MetricTile(title: "Body temp", value: "97.8", unit: "°F", trend: "Neutral", color: .orange)
-                    MetricTile(title: "HRV", value: "82", unit: "ms", trend: "Up 5%", color: .green)
-                    MetricTile(title: "Recovery", value: "92", unit: "%", trend: "Peak zone", color: .purple)
-                }
-            }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 28)
-        }
-        .background(Color(.systemGroupedBackground))
-        .navigationTitle("Analytics")
-    }
-}
-
-struct AnalyticsGraphCard: View {
-    let title: String
-    let subtitle: String
-    let metric: String
-    let changeDescription: String
-    let values: [Double]
-    let gradient: Gradient
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            VStack(alignment: .leading, spacing: 6) {
-                Text(title)
-                    .font(.headline)
-                Text(subtitle)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
-            GeometryReader { proxy in
-                ZStack {
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .fill(Color(.systemBackground))
-
-                    VStack {
-                        Spacer()
-                        AnalyticsLine(values: values)
-                            .stroke(
-                                LinearGradient(gradient: gradient, startPoint: .leading, endPoint: .trailing),
-                                style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round)
-                            )
-                            .frame(height: proxy.size.height * 0.6)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 18)
-
-                        Spacer(minLength: 4)
-                    }
-
-                    VStack {
-                        Spacer()
-                        HStack {
-                            ForEach(Array(values.enumerated()), id: \.offset) { item in
-                                Circle()
-                                    .fill(item.offset == values.count - 1 ? Color.primary : Color.secondary.opacity(0.2))
-                                    .frame(width: item.offset == values.count - 1 ? 8 : 4)
-                                if item.offset < values.count - 1 {
-                                    Spacer()
-                                }
-                            }
-                        }
-                        .padding(.horizontal, 30)
-                        .padding(.bottom, 12)
-                    }
-                }
-            }
-            .frame(height: 180)
-
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(metric)
-                        .font(.title3.weight(.semibold))
-                    Text(changeDescription)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-
-                Spacer()
-
-                Label("Predictive model", systemImage: "chart.line.uptrend.xyaxis")
-                    .font(.caption.weight(.semibold))
-                    .padding(.vertical, 6)
-                    .padding(.horizontal, 12)
-                    .background(Color(.secondarySystemBackground), in: Capsule())
-            }
-        }
-        .padding(24)
-        .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 28, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .strokeBorder(Color.white.opacity(0.15))
-        )
-    }
-}
-
-struct AnalyticsLine: Shape {
-    let values: [Double]
-
-    func path(in rect: CGRect) -> Path {
-        guard values.count > 1 else { return Path() }
-
-        let minValue = values.min() ?? 0
-        let maxValue = values.max() ?? 1
-        let range = max(maxValue - minValue, 0.001)
-        let stepX = rect.width / CGFloat(values.count - 1)
-
-        var path = Path()
-        for (index, value) in values.enumerated() {
-            let x = CGFloat(index) * stepX
-            let normalized = (value - minValue) / range
-            let y = rect.maxY - CGFloat(normalized) * rect.height
-
-            if index == 0 {
-                path.move(to: CGPoint(x: x, y: y))
-            } else {
-                path.addLine(to: CGPoint(x: x, y: y))
-            }
-        }
-        return path
-    }
-}
-
-struct LiveProcessingCard: View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            HStack {
-                Text("Live data pipeline")
-                    .font(.headline)
-                Spacer()
-                Capsule()
-                    .fill(Color.green.opacity(0.85))
-                    .frame(width: 70, height: 26)
-                    .overlay(
-                        HStack(spacing: 4) {
-                            Circle()
-                                .fill(Color.white)
-                                .frame(width: 6, height: 6)
-                                .shadow(color: .white, radius: 2)
-                            Text("Active")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(.white)
-                        }
-                    )
-            }
-
-            Text("Sensor fusion engine blending watch, motion, and respiratory signals in real time.")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-
-            VStack(spacing: 12) {
-                PipelineRow(icon: "heart.fill", title: "Cardio", description: "HR + HRV smoothed over 15s window")
-                PipelineRow(icon: "waveform", title: "Motion", description: "Micro-adjustments + posture drift")
-                PipelineRow(icon: "wind", title: "Respiration", description: "Breath cadence + variability score")
-            }
-        }
-        .padding(24)
-        .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 28, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .strokeBorder(Color.white.opacity(0.12))
-        )
-    }
-}
-
-struct PipelineRow: View {
-    let icon: String
-    let title: String
-    let description: String
-
-    var body: some View {
-        HStack(spacing: 14) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(Color.blue.opacity(0.1))
-                    .frame(width: 44, height: 44)
-                Image(systemName: icon)
-                    .foregroundStyle(Color.blue)
-            }
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .font(.subheadline.weight(.semibold))
-                Text(description)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            Spacer()
-            Image(systemName: "checkmark.seal.fill")
-                .foregroundStyle(Color.green)
-        }
-    }
-}
-
-struct MetricTile: View {
-    let title: String
-    let value: String
-    let unit: String
-    let trend: String
-    let color: Color
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(title)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-
-            HStack(alignment: .firstTextBaseline, spacing: 4) {
-                Text(value)
-                    .font(.system(size: 28, weight: .bold, design: .rounded))
-                Text(unit)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
-            HStack(spacing: 6) {
-                Circle()
-                    .fill(color)
-                    .frame(width: 8, height: 8)
-                Text(trend)
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(color)
-            }
-        }
-        .padding(20)
-        .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .strokeBorder(Color.white.opacity(0.1))
-        )
-    }
-}
-
-struct SettingsTab: View {
-    @EnvironmentObject var healthKitManager: MockHealthKitManager
-    @EnvironmentObject var watchConnectivityManager: MockWatchConnectivityManager
-
-    var body: some View {
-        VStack(spacing: 20) {
-            Text("Settings")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-
-            VStack(spacing: 16) {
-                SettingRow(
-                    title: "HealthKit",
-                    status: healthKitManager.isAuthorized ? "Authorized" : "Not Authorized",
-                    statusColor: healthKitManager.isAuthorized ? .green : .red
-                )
-
-                SettingRow(
-                    title: "Apple Watch",
-                    status: watchConnectivityManager.isConnected ? "Connected" : "Not Connected",
-                    statusColor: watchConnectivityManager.isConnected ? .green : .red
-                )
-            }
-
-            Spacer()
-        }
-        .padding()
-        .navigationTitle("Settings")
-    }
-}
-
-struct SettingRow: View {
-    let title: String
-    let status: String
-    let statusColor: Color
-
-    var body: some View {
-        HStack {
-            Text(title)
-                .font(.headline)
-            Spacer()
-            Text(status)
-                .font(.subheadline)
-                .foregroundColor(statusColor)
-        }
-        .padding()
-        .background(Color.gray.opacity(0.15))
-        .cornerRadius(12)
+        .padding(16)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 }
 
 #Preview {
     ContentView()
+}
+
+// MARK: - Soundscape Models
+
+struct SoundscapePlan: Identifiable {
+    let id = UUID()
+    let recommendationSummary: String
+    let wakeEaseRating: String
+    let cortisolReductionScore: Double
+    let ambientProfile: AmbientProfile
+    let segments: [SoundscapeSegment]
+}
+
+struct AmbientProfile {
+    let name: String
+    let description: String
+    let dynamicElements: [String]
+}
+
+struct SoundscapeSegment: Identifiable {
+    let id = UUID()
+    let label: String
+    let soundPalette: String
+    let coachingNote: String
+    let startOffset: TimeInterval
+    let duration: TimeInterval
+    let intensity: String
+}
+
+class SoundscapeService: ObservableObject {
+    static let shared = SoundscapeService()
+    
+    private init() {}
+    
+    func generatePlan(napDuration: TimeInterval, biometrics: SleepBiometrics) -> SoundscapePlan {
+        let ambientProfile = AmbientProfile(
+            name: "Gentle Morning",
+            description: "Soft nature sounds with gradual volume increase",
+            dynamicElements: ["birds", "water", "wind"]
+        )
+        
+        let segments = [
+            SoundscapeSegment(
+                label: "Pre-wake",
+                soundPalette: "Soft nature",
+                coachingNote: "Preparing your mind for gentle awakening",
+                startOffset: napDuration - 300,
+                duration: 180,
+                intensity: "Low"
+            ),
+            SoundscapeSegment(
+                label: "Wake transition",
+                soundPalette: "Melodic tones",
+                coachingNote: "Gradually increasing awareness",
+                startOffset: napDuration - 120,
+                duration: 120,
+                intensity: "Medium"
+            )
+        ]
+        
+        return SoundscapePlan(
+            recommendationSummary: "Optimized for your current biometrics",
+            wakeEaseRating: "Gentle",
+            cortisolReductionScore: 85.0,
+            ambientProfile: ambientProfile,
+            segments: segments
+        )
+    }
 }
