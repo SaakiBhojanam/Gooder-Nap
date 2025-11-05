@@ -17,6 +17,7 @@ class MockWatchConnectivityManager: ObservableObject {
     @Published var isConnected = false
 }
 
+@MainActor
 class MockHomeViewModel: ObservableObject {
     @Published var napDuration: TimeInterval = 1800 { // 30 minutes
         didSet {
@@ -91,13 +92,17 @@ class MockHomeViewModel: ObservableObject {
                 return
             }
 
-            if self.remainingNapTime > 1 {
-                self.remainingNapTime -= 1
-            } else {
-                self.remainingNapTime = 0
-                timer.invalidate()
-                self.napTimer = nil
-                self.endNap()
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+
+                if self.remainingNapTime > 1 {
+                    self.remainingNapTime -= 1
+                } else {
+                    self.remainingNapTime = 0
+                    self.napTimer?.invalidate()
+                    self.napTimer = nil
+                    self.endNap()
+                }
             }
         }
 
@@ -161,7 +166,7 @@ struct ContentView: View {
                         }
                         .tag(AppView.history)
 
-                    AnalyticsTab()
+                    AnalyticsDashboardTab()
                         .tabItem {
                             Image(systemName: "waveform.path.ecg")
                             Text("Analytics")
