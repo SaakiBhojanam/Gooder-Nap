@@ -28,6 +28,26 @@ struct AnalyticsView: View {
         .init(minute: 75, heartRate: 62, hrv: 62)
     ]
 
+    private let consistencyMetrics: [ConsistencyMetric] = [
+        .init(title: "Nap Rhythm", value: "4.6 days", change: "+1.1 vs avg", systemImage: "calendar.badge.clock", color: .green),
+        .init(title: "Cycle Alignment", value: "88%", change: "+6% synced", systemImage: "gyroscope", color: .blue),
+        .init(title: "Recovery Delta", value: "+12%", change: "after wake tweak", systemImage: "arrow.triangle.2.circlepath", color: .purple),
+        .init(title: "Onset Calm", value: "9 min", change: "↓ 3 min", systemImage: "wind", color: .orange)
+    ]
+
+    private let circadianPerformance: [CircadianPerformance] = [
+        .init(window: "11 AM", efficiency: 0.68, readiness: 62),
+        .init(window: "1 PM", efficiency: 0.81, readiness: 74),
+        .init(window: "3 PM", efficiency: 0.9, readiness: 88),
+        .init(window: "5 PM", efficiency: 0.76, readiness: 70)
+    ]
+
+    private let wakeWindows: [WakeWindow] = [
+        .init(label: "Primary", range: "74 – 78 min", confidence: "92% confidence", detail: "Matches HRV crest & lowest movement variance."),
+        .init(label: "Secondary", range: "86 – 90 min", confidence: "78% confidence", detail: "Aligns with REM exit on 4 of 6 naps."),
+        .init(label: "Fallback", range: "58 – 62 min", confidence: "64% confidence", detail: "Use when nap starts past 4 PM to avoid sleep inertia.")
+    ]
+
     private let recommendations: [AnalyticsRecommendation] = [
         .init(title: "Ideal Nap Window", detail: "Your most restorative naps start between 1:30-2:15 PM."),
         .init(title: "Recovery Sweet Spot", detail: "Wake target at the 75 minute mark to hit peak recovery based on your HRV trends."),
@@ -49,6 +69,9 @@ struct AnalyticsView: View {
                 weeklyPerformance
                 biometricsSection
                 sleepStageSection
+                consistencySection
+                circadianSection
+                wakeWindowSection
                 recommendationSection
             }
             .padding(.horizontal)
@@ -220,6 +243,123 @@ struct AnalyticsView: View {
         .background(RoundedRectangle(cornerRadius: 18).fill(Color(.systemBackground)))
     }
 
+    private var consistencySection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            sectionHeader(title: "Consistency Snapshot", subtitle: "How steady your nap habits stayed this week")
+
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                ForEach(consistencyMetrics) { metric in
+                    HStack(alignment: .top, spacing: 12) {
+                        Image(systemName: metric.systemImage)
+                            .font(.title3)
+                            .foregroundColor(metric.color)
+                            .frame(width: 36, height: 36)
+                            .background(Circle().fill(metric.color.opacity(0.12)))
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(metric.title)
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                            Text(metric.value)
+                                .font(.title3)
+                                .fontWeight(.bold)
+                            Text(metric.change)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        Spacer()
+                    }
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color(.secondarySystemGroupedBackground))
+                    )
+                }
+            }
+
+            Divider()
+
+            Text("Your nap rhythm stayed within a 28 minute variance, keeping circadian alignment in the green zone.")
+                .font(.footnote)
+                .foregroundColor(.secondary)
+        }
+        .padding()
+        .background(RoundedRectangle(cornerRadius: 18).fill(Color(.systemBackground)))
+    }
+
+    private var circadianSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            sectionHeader(title: "Circadian Alignment", subtitle: "Efficiency & readiness by nap start window")
+
+            Chart {
+                ForEach(circadianPerformance) { slot in
+                    BarMark(
+                        x: .value("Window", slot.window),
+                        y: .value("Efficiency", slot.efficiency * 100)
+                    )
+                    .foregroundStyle(Color.accentColor.opacity(0.7))
+
+                    LineMark(
+                        x: .value("Window", slot.window),
+                        y: .value("Readiness", slot.readiness)
+                    )
+                    .interpolationMethod(.monotone)
+                    .foregroundStyle(.teal)
+
+                    PointMark(
+                        x: .value("Window", slot.window),
+                        y: .value("Readiness", slot.readiness)
+                    )
+                    .foregroundStyle(.teal)
+                }
+            }
+            .frame(height: 220)
+            .chartYAxisLabel("Efficiency % / Readiness", position: .leading)
+
+            VStack(alignment: .leading, spacing: 8) {
+                InsightPill(title: "Prime Start", detail: "3 PM naps deliver the best combo of 90% efficiency + 88 readiness.", systemImage: "sun.max")
+                InsightPill(title: "Avoid Late", detail: "After 5 PM readiness drops 18 points with longer recovery drag.", systemImage: "moonphase.last.quarter")
+            }
+        }
+        .padding()
+        .background(RoundedRectangle(cornerRadius: 18).fill(Color(.systemBackground)))
+    }
+
+    private var wakeWindowSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            sectionHeader(title: "Optimal Wake Windows", subtitle: "Dynamic alarm targets tuned for this week")
+
+            ForEach(wakeWindows) { window in
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text(window.label)
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                        Spacer()
+                        Text(window.range)
+                            .font(.subheadline)
+                            .fontWeight(.bold)
+                    }
+
+                    Text(window.confidence)
+                        .font(.caption)
+                        .foregroundColor(.accentColor)
+
+                    Text(window.detail)
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(Color(.tertiarySystemGroupedBackground))
+                )
+            }
+        }
+    }
+
     private var recommendationSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             sectionHeader(title: "Actionable Insights", subtitle: "Adjustments based on your AI nap coach")
@@ -285,6 +425,30 @@ private struct BiometricTrend: Identifiable {
     let minute: Int
     let heartRate: Double
     let hrv: Double
+}
+
+private struct ConsistencyMetric: Identifiable {
+    let id = UUID()
+    let title: String
+    let value: String
+    let change: String
+    let systemImage: String
+    let color: Color
+}
+
+private struct CircadianPerformance: Identifiable {
+    let id = UUID()
+    let window: String
+    let efficiency: Double
+    let readiness: Double
+}
+
+private struct WakeWindow: Identifiable {
+    let id = UUID()
+    let label: String
+    let range: String
+    let confidence: String
+    let detail: String
 }
 
 private struct AnalyticsRecommendation: Identifiable {
