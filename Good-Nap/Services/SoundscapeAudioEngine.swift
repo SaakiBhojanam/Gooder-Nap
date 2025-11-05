@@ -71,24 +71,35 @@ final class SoundscapeAudioEngine {
         let steps = 20
         var currentStep = 0
         fadeOutTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { [weak self] timer in
-            guard let self else { timer.invalidate(); return }
-            currentStep += 1
-            let attenuation = Float(max(0, steps - currentStep)) / Float(steps)
-            ambientNode.volume = ambientNode.volume * attenuation
-            harmonicNode.volume = harmonicNode.volume * attenuation
-            shimmerNode.volume = shimmerNode.volume * attenuation
-
-            if currentStep >= steps {
+            guard let self else {
                 timer.invalidate()
-                ambientNode.stop()
-                harmonicNode.stop()
-                shimmerNode.stop()
-                engine.pause()
-                try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+                return
+            }
+
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+
+                currentStep += 1
+                let attenuation = Float(max(0, steps - currentStep)) / Float(steps)
+                ambientNode.volume = ambientNode.volume * attenuation
+                harmonicNode.volume = harmonicNode.volume * attenuation
+                shimmerNode.volume = shimmerNode.volume * attenuation
+
+                if currentStep >= steps {
+                    self.fadeOutTimer?.invalidate()
+                    self.fadeOutTimer = nil
+                    ambientNode.stop()
+                    harmonicNode.stop()
+                    shimmerNode.stop()
+                    engine.pause()
+                    try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+                }
             }
         }
 
-        RunLoop.main.add(fadeOutTimer!, forMode: .common)
+        if let fadeOutTimer {
+            RunLoop.main.add(fadeOutTimer, forMode: .common)
+        }
     }
 
     // MARK: - Engine configuration
@@ -221,7 +232,10 @@ final class SoundscapeAudioEngine {
 
     private func scheduleSegment(_ segment: SoundscapeSegment, delay: TimeInterval, duration: TimeInterval) {
         let timer = Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { [weak self] _ in
-            self?.applySegment(segment, duration: duration)
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                self.applySegment(segment, duration: duration)
+            }
         }
         RunLoop.main.add(timer, forMode: .common)
         segmentTimers.append(timer)
@@ -229,10 +243,12 @@ final class SoundscapeAudioEngine {
 
     private func scheduleReset(after delay: TimeInterval) {
         let timer = Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { [weak self] _ in
-            guard let self else { return }
-            ambientTargetVolume = isPreviewMode ? 0.12 : 0.08
-            harmonicTargetVolume = isPreviewMode ? 0.02 : 0.0
-            shimmerTargetVolume = 0.0
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                ambientTargetVolume = isPreviewMode ? 0.12 : 0.08
+                harmonicTargetVolume = isPreviewMode ? 0.02 : 0.0
+                shimmerTargetVolume = 0.0
+            }
         }
         RunLoop.main.add(timer, forMode: .common)
         segmentTimers.append(timer)
@@ -262,8 +278,10 @@ final class SoundscapeAudioEngine {
 
         // Gradually add more shimmer near the end of the segment for gentle brightness.
         let shimmerTimer = Timer.scheduledTimer(withTimeInterval: max(duration - 8, 4), repeats: false) { [weak self] _ in
-            guard let self else { return }
-            shimmerTargetVolume = min(shimmerTargetVolume + 0.02, 0.12)
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                shimmerTargetVolume = min(shimmerTargetVolume + 0.02, 0.12)
+            }
         }
         RunLoop.main.add(shimmerTimer, forMode: .common)
         segmentTimers.append(shimmerTimer)
@@ -279,7 +297,10 @@ final class SoundscapeAudioEngine {
     private func scheduleVolumeSmoothing() {
         guard smoothingTimer == nil else { return }
         smoothingTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { [weak self] _ in
-            self?.stepVolumesTowardTargets()
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                self.stepVolumesTowardTargets()
+            }
         }
         if let smoothingTimer {
             RunLoop.main.add(smoothingTimer, forMode: .common)

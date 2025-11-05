@@ -1,7 +1,8 @@
 import SwiftUI
 import Charts
 
-struct AnalyticsTab: View {
+@MainActor
+struct AnalyticsDashboardTab: View {
     private let analytics = AnalyticsSnapshot.demo
 
     var body: some View {

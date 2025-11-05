@@ -2,6 +2,7 @@ import Foundation
 import Combine
 
 /// Main ML service for sleep stage classification and wake time prediction
+@MainActor
 public class MLModelService: ObservableObject {
     public static let shared = MLModelService()
     
