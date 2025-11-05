@@ -17,6 +17,18 @@ class MockWatchConnectivityManager: ObservableObject {
     @Published var isConnected = false
 }
 
+class ThemeManager: ObservableObject {
+    @Published var isDarkMode: Bool = false {
+        didSet {
+            UserDefaults.standard.set(isDarkMode, forKey: "isDarkMode")
+        }
+    }
+    
+    init() {
+        self.isDarkMode = UserDefaults.standard.bool(forKey: "isDarkMode")
+    }
+}
+
 @MainActor
 class MockHomeViewModel: ObservableObject {
     @Published var napDuration: TimeInterval = 1800 { // 30 minutes
@@ -147,6 +159,7 @@ struct ContentView: View {
     @StateObject private var watchConnectivityManager = MockWatchConnectivityManager()
     @StateObject private var homeViewModel = MockHomeViewModel()
     @StateObject private var mlModelService = MLModelService.shared
+    @StateObject private var themeManager = ThemeManager()
 
     @State private var currentView: AppView = .home
     @State private var showMLTraining = true
@@ -197,12 +210,14 @@ struct ContentView: View {
                 .environmentObject(watchConnectivityManager)
                 .environmentObject(homeViewModel)
                 .environmentObject(mlModelService)
+                .environmentObject(themeManager)
             }
         }
         .onAppear {
             // Initialize ML models on app launch
             mlModelService.initializeMLModels()
         }
+        .preferredColorScheme(themeManager.isDarkMode ? .dark : .light)
     }
 }
 
@@ -766,42 +781,778 @@ extension HistorySession {
 // MARK: - Missing Tab Views
 
 struct AnalyticsTab: View {
+    @State private var selectedMetric: AnalyticsMetric = .weeklyTrend
+    
+    private let syntheticData = SleepAnalyticsData.generateSynthetic()
+    
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                Text("Analytics")
-                    .font(.system(size: 34, weight: .bold, design: .rounded))
-                    .padding(.horizontal, 20)
+            VStack(alignment: .leading, spacing: 20) {
+                // Header
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Analytics")
+                        .font(.system(size: 34, weight: .bold, design: .rounded))
+                    
+                    Text("Comprehensive sleep insights & trends")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 20)
                 
-                Text("Sleep analytics and insights coming soon")
-                    .font(.body)
-                    .foregroundStyle(.secondary)
+                // Sleep Score Card
+                SleepScoreCard(sleepData: syntheticData)
                     .padding(.horizontal, 20)
+                    .padding(.bottom, 12)
+                
+                // Key Metrics Grid
+                VStack(spacing: 12) {
+                    HStack(spacing: 12) {
+                        MetricCard(
+                            title: "Avg Heart Rate",
+                            value: "\(Int(syntheticData.averageHeartRate))",
+                            unit: "BPM",
+                            icon: "heart.fill",
+                            color: .red
+                        )
+                        
+                        MetricCard(
+                            title: "HRV Score",
+                            value: "\(Int(syntheticData.heartRateVariability))",
+                            unit: "ms",
+                            icon: "waveform.path.ecg",
+                            color: .blue
+                        )
+                    }
+                    
+                    HStack(spacing: 12) {
+                        MetricCard(
+                            title: "Respiration Rate",
+                            value: String(format: "%.1f", syntheticData.respiratoryRate),
+                            unit: "breaths/min",
+                            icon: "lungs.fill",
+                            color: .green
+                        )
+                        
+                        MetricCard(
+                            title: "Oxygen Saturation",
+                            value: "\(Int(syntheticData.oxygenSaturation))",
+                            unit: "%",
+                            icon: "o2.circle.fill",
+                            color: .cyan
+                        )
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 40)
+                
+                // Heart Rate Chart
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Heart Rate Trend")
+                        .font(.headline)
+                        .padding(.horizontal, 20)
+                    
+                    HeartRateChartView(data: syntheticData.heartRateTrend)
+                        .frame(height: 200)
+                        .padding(.horizontal, 20)
+                }
+                .padding(.bottom, 64)
+                
+                // Sleep Quality Timeline
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Sleep Stage Distribution")
+                        .font(.headline)
+                        .padding(.horizontal, 20)
+                    
+                    SleepStageDistributionView(data: syntheticData.sleepStageDistribution)
+                        .padding(.horizontal, 20)
+                }
+                .padding(.top, 12)
+                .padding(.bottom, 12)
+                
+                // Weekly Comparison
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Weekly Sleep Score Trend")
+                        .font(.headline)
+                        .padding(.horizontal, 20)
+                    
+                    WeeklySleepTrendView(data: syntheticData.weeklySleepScores)
+                        .frame(height: 180)
+                        .padding(.horizontal, 20)
+                }
+                .padding(.bottom, 24)
+                
+                // Insights Section
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Sleep Insights")
+                        .font(.headline)
+                        .padding(.horizontal, 20)
+                    
+                    ForEach(syntheticData.insights, id: \.self) { insight in
+                        InsightCard(insight: insight)
+                    }
+                    .padding(.horizontal, 20)
+                }
             }
-            .padding(.vertical, 24)
+            .padding(.bottom, 30)
         }
         .background(Color(.systemGroupedBackground).ignoresSafeArea())
         .navigationTitle("Analytics")
     }
 }
 
+// MARK: - Analytics Data Model
+
+struct SleepAnalyticsData {
+    let averageHeartRate: Double
+    let heartRateVariability: Double
+    let respiratoryRate: Double
+    let oxygenSaturation: Double
+    let sleepScore: Double
+    let deepSleepPercentage: Double
+    let remSleepPercentage: Double
+    let lightSleepPercentage: Double
+    let heartRateTrend: [Double]
+    let sleepStageDistribution: [Double]
+    let weeklySleepScores: [Double]
+    let insights: [String]
+    
+    static func generateSynthetic() -> SleepAnalyticsData {
+        let heartRateBase = Double.random(in: 55...70)
+        var heartRateTrend: [Double] = [heartRateBase]
+        for _ in 1..<24 {
+            let last = heartRateTrend.last!
+            let change = Double.random(in: -1.5...1.5)
+            heartRateTrend.append(last + change)
+        }
+        
+        let weeklySleepScores = (0..<7).map { _ in
+            Double.random(in: 72...95)
+        }
+        
+        let sleepStageDistribution = [
+            Double.random(in: 20...30), // Deep sleep
+            Double.random(in: 15...25), // REM sleep
+            Double.random(in: 45...60)  // Light sleep
+        ]
+        
+        let sleepScore = (weeklySleepScores.reduce(0, +) / Double(weeklySleepScores.count))
+        
+        let insights = [
+            "✓ Your sleep quality improved by 12% this week",
+            "→ Consider increasing deep sleep to improve recovery",
+            "⊕ REM sleep at optimal levels for cognitive function",
+            "♡ Heart rate variability is within healthy range"
+        ]
+        
+        return SleepAnalyticsData(
+            averageHeartRate: heartRateBase,
+            heartRateVariability: Double.random(in: 45...85),
+            respiratoryRate: Double.random(in: 11...16),
+            oxygenSaturation: Double.random(in: 96...99),
+            sleepScore: sleepScore,
+            deepSleepPercentage: sleepStageDistribution[0],
+            remSleepPercentage: sleepStageDistribution[1],
+            lightSleepPercentage: sleepStageDistribution[2],
+            heartRateTrend: heartRateTrend,
+            sleepStageDistribution: sleepStageDistribution,
+            weeklySleepScores: weeklySleepScores,
+            insights: insights
+        )
+    }
+}
+
+enum AnalyticsMetric {
+    case weeklyTrend
+    case dailyBreakdown
+    case biometrics
+}
+
+// MARK: - Analytics Components
+
+struct SleepScoreCard: View {
+    let sleepData: SleepAnalyticsData
+    
+    var scoreColor: Color {
+        if sleepData.sleepScore >= 85 { return .green }
+        else if sleepData.sleepScore >= 70 { return .blue }
+        else if sleepData.sleepScore >= 55 { return .yellow }
+        else { return .red }
+    }
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Sleep Score")
+                        .font(.headline)
+                    
+                    HStack(alignment: .firstTextBaseline, spacing: 4) {
+                        Text("\(Int(sleepData.sleepScore))")
+                            .font(.system(size: 48, weight: .bold))
+                        
+                        Text("/100")
+                            .font(.title3)
+                            .foregroundStyle(.secondary)
+                    }
+                    
+                    Text(sleepScoreDescription(sleepData.sleepScore))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                
+                Spacer()
+                
+                VStack(alignment: .center, spacing: 0) {
+                    ZStack {
+                        Circle()
+                            .fill(scoreColor.opacity(0.2))
+                        
+                        Circle()
+                            .trim(from: 0, to: sleepData.sleepScore / 100)
+                            .stroke(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [scoreColor, scoreColor.opacity(0.7)]),
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                style: StrokeStyle(lineWidth: 8, lineCap: .round)
+                            )
+                            .rotationEffect(.degrees(-90))
+                        
+                        Image(systemName: "moon.stars.fill")
+                            .font(.title2)
+                            .foregroundStyle(scoreColor)
+                    }
+                    .frame(width: 100, height: 100)
+                }
+            }
+            
+            Divider()
+            
+            HStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Deep Sleep")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Text("\(Int(sleepData.deepSleepPercentage))%")
+                        .font(.headline)
+                }
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("REM Sleep")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Text("\(Int(sleepData.remSleepPercentage))%")
+                        .font(.headline)
+                }
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Light Sleep")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Text("\(Int(sleepData.lightSleepPercentage))%")
+                        .font(.headline)
+                }
+                
+                Spacer()
+            }
+        }
+        .padding(20)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+    }
+    
+    private func sleepScoreDescription(_ score: Double) -> String {
+        switch score {
+        case 85...: return "Excellent sleep quality"
+        case 70...: return "Good sleep quality"
+        case 55...: return "Fair sleep quality"
+        default: return "Poor sleep quality"
+        }
+    }
+}
+
+struct MetricCard: View {
+    let title: String
+    let value: String
+    let unit: String
+    let icon: String
+    let color: Color
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Image(systemName: icon)
+                    .font(.title3)
+                    .foregroundStyle(color)
+                Spacer()
+            }
+            
+            HStack(alignment: .firstTextBaseline, spacing: 4) {
+                Text(value)
+                    .font(.title2.weight(.bold))
+                
+                Text(unit)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            
+            Text(title)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+}
+
+struct HeartRateChartView: View {
+    let data: [Double]
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Max: \(Int(data.max() ?? 0))")
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                    
+                    Text("Min: \(Int(data.min() ?? 0))")
+                        .font(.caption)
+                        .foregroundStyle(.blue)
+                }
+                
+                Spacer()
+                
+                Text("Last 24h")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            
+            HStack(alignment: .top, spacing: 8) {
+                // Y-Axis Labels
+                VStack(alignment: .trailing, spacing: 0) {
+                    let maxValue = data.max() ?? 100
+                    let minValue = data.min() ?? 0
+                    let range = maxValue - minValue
+                    let yAxisSteps = [100, 75, 50, 25, 0].map { CGFloat($0) / 100.0 }
+                    
+                    ForEach(0..<yAxisSteps.count, id: \.self) { index in
+                        let normalizedValue = yAxisSteps[index]
+                        let value = minValue + (range * normalizedValue)
+                        Text("\(Int(value))")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .frame(height: 160.0 / CGFloat(yAxisSteps.count - 1), alignment: .center)
+                    }
+                }
+                .frame(width: 28)
+                
+                // Chart Area
+                Canvas { context, size in
+                    let maxValue = data.max() ?? 100
+                    let minValue = data.min() ?? 0
+                    let range = maxValue - minValue
+                    
+                    for (index, value) in data.enumerated() {
+                        let x = CGFloat(index) / CGFloat(data.count - 1) * (size.width - 24)
+                        let y = CGFloat(1 - (value - minValue) / range) * (size.height - 24)
+                        
+                        var path = Path()
+                        let radius: CGFloat = 3
+                        path.addEllipse(in: CGRect(x: x - radius, y: y - radius, width: radius * 2, height: radius * 2))
+                        
+                        context.fill(
+                            path,
+                            with: .color(.red.opacity(0.6))
+                        )
+                    }
+                }
+                .frame(height: 160)
+            }
+            .padding(12)
+            .background(Color(.systemGray5), in: RoundedRectangle(cornerRadius: 12))
+            
+            HStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Heart Rate Variability")
+                        .font(.caption.weight(.semibold))
+                    Text("Real-time heart rate tracking over 24 hours")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+            }
+            .padding(.horizontal, 12)
+            .padding(.top, 8)
+        }
+        .padding(12)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+}
+
+struct SleepStageDistributionView: View {
+    let data: [Double]
+    
+    private var normalizedData: [Double] {
+        let total = data.reduce(0, +)
+        return data.map { ($0 / total) * 100 }
+    }
+    
+    var body: some View {
+        VStack(spacing: 12) {
+            HStack(spacing: 16) {
+                VStack(alignment: .center, spacing: 8) {
+                    ZStack {
+                        Canvas { context, size in
+                            var startAngle: Double = -90
+                            let stages: [(Color, Double)] = [
+                                (.purple, normalizedData[0]),
+                                (.pink, normalizedData[1]),
+                                (.blue, normalizedData[2])
+                            ]
+                            
+                            for (color, value) in stages {
+                                let endAngle = startAngle + (value / 100 * 360)
+                                
+                                var path = Path()
+                                path.addArc(
+                                    center: CGPoint(x: size.width / 2, y: size.height / 2),
+                                    radius: 40,
+                                    startAngle: .degrees(startAngle),
+                                    endAngle: .degrees(endAngle),
+                                    clockwise: false
+                                )
+                                
+                                context.stroke(
+                                    path,
+                                    with: .color(color),
+                                    lineWidth: 12
+                                )
+                                
+                                startAngle = endAngle
+                            }
+                        }
+                        .frame(width: 100, height: 100)
+                        
+                        VStack(spacing: 0) {
+                            Text("Sleep")
+                                .font(.caption.weight(.semibold))
+                            Text("Stages")
+                                .font(.caption.weight(.semibold))
+                        }
+                        .foregroundStyle(.secondary)
+                    }
+                    .frame(width: 120, height: 120)
+                }
+                
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack(spacing: 8) {
+                        Circle()
+                            .fill(.purple)
+                            .frame(width: 12, height: 12)
+                        
+                        Text("Deep Sleep")
+                            .font(.caption)
+                        Spacer()
+                        Text("\(Int(normalizedData[0]))%")
+                            .font(.caption.weight(.semibold))
+                    }
+                    
+                    HStack(spacing: 8) {
+                        Circle()
+                            .fill(.pink)
+                            .frame(width: 12, height: 12)
+                        
+                        Text("REM Sleep")
+                            .font(.caption)
+                        Spacer()
+                        Text("\(Int(normalizedData[1]))%")
+                            .font(.caption.weight(.semibold))
+                    }
+                    
+                    HStack(spacing: 8) {
+                        Circle()
+                            .fill(.blue)
+                            .frame(width: 12, height: 12)
+                        
+                        Text("Light Sleep")
+                            .font(.caption)
+                        Spacer()
+                        Text("\(Int(normalizedData[2]))%")
+                            .font(.caption.weight(.semibold))
+                    }
+                }
+                
+                Spacer()
+            }
+        }
+        .padding(16)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+}
+
+struct WeeklySleepTrendView: View {
+    let data: [Double]
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            HStack {
+                Text("Average: \(String(format: "%.0f", data.reduce(0, +) / Double(data.count)))")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                
+                Spacer()
+                
+                Text("Mon - Sun")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal, 12)
+            .padding(.top, 12)
+            
+            HStack(alignment: .bottom, spacing: 8) {
+                let maxValue = 100.0
+                let days = ["M", "T", "W", "T", "F", "S", "S"]
+                
+                ForEach(0..<data.count, id: \.self) { index in
+                    VStack(spacing: 4) {
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [.blue, .cyan]),
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                            )
+                            .frame(height: CGFloat(data[index] / maxValue * 120))
+                        
+                        Text(days[index])
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 12)
+            .padding(.bottom, 12)
+        }
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+}
+
+struct InsightCard: View {
+    let insight: String
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "lightbulb.fill")
+                .foregroundStyle(.yellow)
+                .font(.title3)
+            
+            Text(insight)
+                .font(.caption)
+                .lineLimit(3)
+            
+            Spacer()
+        }
+        .padding(12)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+}
+
 struct SettingsTab: View {
+    @State private var enableNotifications = true
+    @State private var enableHapticFeedback = true
+    @State private var enableHealthKitSync = true
+    @State private var enableAutoWakeUp = true
+    @State private var enableHeartRateTracking = true
+    @State private var enableDataBackup = true
+    @State private var enablePrivateMode = false
+    @EnvironmentObject var themeManager: ThemeManager
+    
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                Text("Settings")
-                    .font(.system(size: 34, weight: .bold, design: .rounded))
-                    .padding(.horizontal, 20)
+                // Header
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Settings")
+                        .font(.system(size: 34, weight: .bold, design: .rounded))
+                    
+                    Text("Customize your sleep tracking experience")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 20)
                 
-                Text("App settings and preferences coming soon")
-                    .font(.body)
-                    .foregroundStyle(.secondary)
+                // Notifications Section
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Notifications & Alerts")
+                        .font(.headline)
+                        .padding(.horizontal, 20)
+                    
+                    SettingToggleRow(
+                        title: "Push Notifications",
+                        subtitle: "Receive alerts for nap reminders",
+                        icon: "bell.fill",
+                        isEnabled: $enableNotifications
+                    )
                     .padding(.horizontal, 20)
+                    
+                    SettingToggleRow(
+                        title: "Haptic Feedback",
+                        subtitle: "Vibrations for interactions",
+                        icon: "iphone.gen3.radiowaves.left.and.right",
+                        isEnabled: $enableHapticFeedback
+                    )
+                    .padding(.horizontal, 20)
+                }
+                
+                // Health & Tracking Section
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Health & Tracking")
+                        .font(.headline)
+                        .padding(.horizontal, 20)
+                    
+                    SettingToggleRow(
+                        title: "HealthKit Sync",
+                        subtitle: "Sync data with Apple Health",
+                        icon: "heart.text.square.fill",
+                        isEnabled: $enableHealthKitSync
+                    )
+                    .padding(.horizontal, 20)
+                    
+                    SettingToggleRow(
+                        title: "Heart Rate Tracking",
+                        subtitle: "Monitor heart rate during naps",
+                        icon: "heart.fill",
+                        isEnabled: $enableHeartRateTracking
+                    )
+                    .padding(.horizontal, 20)
+                    
+                    SettingToggleRow(
+                        title: "Automatic Wake-Up",
+                        subtitle: "Smart wake time optimization",
+                        icon: "alarm.fill",
+                        isEnabled: $enableAutoWakeUp
+                    )
+                    .padding(.horizontal, 20)
+                }
+                
+                // Privacy & Security Section
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Privacy & Security")
+                        .font(.headline)
+                        .padding(.horizontal, 20)
+                    
+                    SettingToggleRow(
+                        title: "Data Backup",
+                        subtitle: "Cloud backup of sleep data",
+                        icon: "icloud.and.arrow.up.fill",
+                        isEnabled: $enableDataBackup
+                    )
+                    .padding(.horizontal, 20)
+                    
+                    SettingToggleRow(
+                        title: "Private Mode",
+                        subtitle: "Hide sensitive metrics",
+                        icon: "lock.fill",
+                        isEnabled: $enablePrivateMode
+                    )
+                    .padding(.horizontal, 20)
+                }
+                
+                // Display Section
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Display")
+                        .font(.headline)
+                        .padding(.horizontal, 20)
+                    
+                    SettingToggleRow(
+                        title: "Dark Mode",
+                        subtitle: "Always use dark theme",
+                        icon: "moon.fill",
+                        isEnabled: $themeManager.isDarkMode
+                    )
+                    .padding(.horizontal, 20)
+                }
+                
+                // About Section
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("About")
+                        .font(.headline)
+                        .padding(.horizontal, 20)
+                    
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("App Version")
+                                    .font(.body)
+                                Text("1.0.0")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                        }
+                        
+                        Divider()
+                        
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Build Number")
+                                    .font(.body)
+                                Text("Build 001")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                        }
+                    }
+                    .padding(16)
+                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .padding(.horizontal, 20)
+                }
             }
-            .padding(.vertical, 24)
+            .padding(.bottom, 30)
         }
         .background(Color(.systemGroupedBackground).ignoresSafeArea())
         .navigationTitle("Settings")
+    }
+}
+
+struct SettingToggleRow: View {
+    let title: String
+    let subtitle: String
+    let icon: String
+    @Binding var isEnabled: Bool
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundStyle(.blue)
+                .frame(width: 30)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.body.weight(.semibold))
+                
+                Text(subtitle)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            
+            Spacer()
+            
+            Toggle("", isOn: $isEnabled)
+                .tint(.blue)
+        }
+        .padding(16)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 }
 

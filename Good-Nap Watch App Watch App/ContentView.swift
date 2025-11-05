@@ -8,152 +8,228 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var viewModel = NapSessionViewModel()
+    @State private var remainingTime: TimeInterval = 600 // 10 minutes default
+    @State private var totalDuration: TimeInterval = 600
+    @State private var isActive = true
+    @State private var timer: Timer?
+    
+    // Biometric data
+    @State private var heartRate: Int = 65
+    @State private var oxygenSaturation: Int = 98
+    @State private var respirationRate: Double = 13.5
+    @State private var hrvScore: Int = 58
+    @State private var biometricTimer: Timer?
 
     var body: some View {
         TimelineView(.periodic(from: .now, by: 1)) { _ in
-            VStack(spacing: 12) {
-                header
-                progressSection
-                metricsSection
-                actionButtons
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-        }
-        .digitalCrownRotation(
-            $viewModel.targetDurationMinutes,
-            from: viewModel.durationBounds.lowerBound,
-            through: viewModel.durationBounds.upperBound,
-            by: 5,
-            sensitivity: .medium,
-            isContinuous: false,
-            isHapticFeedbackEnabled: true
-        )
-        .focusable(true)
-    }
+            ZStack {
+                LinearGradient(colors: [Color.indigo.opacity(0.25), Color.black.opacity(0.2)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                    .ignoresSafeArea()
 
-    private var header: some View {
-        VStack(spacing: 4) {
-            Text("Good Nap")
-                .font(.system(.title3, design: .rounded))
-                .fontWeight(.semibold)
-            Text(subtitleText)
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-        }
-    }
+                ScrollView {
+                    VStack(spacing: 20) {
+                        Text("NapSync")
+                            .font(.system(size: 20, weight: .bold, design: .rounded))
+                            .foregroundStyle(.primary)
 
-    private var progressSection: some View {
-        ZStack {
-            ProgressView(value: viewModel.progress)
-                .tint(.mint)
-                .scaleEffect(1.1)
+                        timerView
 
-            VStack(spacing: 2) {
-                Text(viewModel.remainingTimeString)
-                    .font(.title3)
-                    .monospacedDigit()
-                    .foregroundStyle(.mint)
-                Text("remaining")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+                        dataCollectionIndicator
+
+                        biometricDataView
+
+                        Spacer()
+                    }
+                    .padding(.vertical, 16)
+                    .padding(.horizontal, 12)
+                }
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: 90)
-        .padding(8)
+        .onAppear {
+            startTimer()
+            startBiometricTimer()
+        }
+        .onDisappear {
+            stopTimer()
+            stopBiometricTimer()
+        }
     }
 
-    private var metricsSection: some View {
-        VStack(spacing: 8) {
-            HStack {
-                metricCard(title: "Max", value: "\(Int(viewModel.targetDurationMinutes)) min")
-                metricCard(title: "Elapsed", value: viewModel.elapsedTimeString)
-            }
-            .font(.caption)
+    private var timerView: some View {
+        VStack(spacing: 12) {
+            ZStack {
+                // Background circle
+                Circle()
+                    .stroke(Color.mint.opacity(0.2), lineWidth: 6)
+                    .frame(width: 120, height: 120)
 
-            VStack(spacing: 4) {
-                Text("Optimal window")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Text(viewModel.optimalWindowDescription)
-                    .font(.caption2)
-                    .multilineTextAlignment(.center)
-                if viewModel.state == .running {
-                    Text("Next wake cue in \(viewModel.optimalWakeCountdown)")
-                        .font(.caption2)
+                // Progress ring
+                Circle()
+                    .trim(from: 0, to: min(1.0 - (remainingTime / totalDuration), 1.0))
+                    .stroke(Color.mint, style: StrokeStyle(lineWidth: 6, lineCap: .round))
+                    .frame(width: 120, height: 120)
+                    .rotationEffect(.degrees(-90))
+
+                // Center time display
+                VStack(spacing: 4) {
+                    Text(formatTime(remainingTime))
+                        .font(.title2)
                         .monospacedDigit()
                         .foregroundStyle(.mint)
+                    Text("remaining")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
                 }
             }
-            .padding(8)
-            .frame(maxWidth: .infinity)
-            .background(Color.mint.opacity(0.1))
-            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-        }
-    }
 
-    private var actionButtons: some View {
-        VStack(spacing: 6) {
-            switch viewModel.state {
-            case .idle, .completed:
-                Button(action: viewModel.startNap) {
-                    Label("Start Nap", systemImage: "play.fill")
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(.mint)
-
-                if viewModel.state == .completed {
-                    Button(role: .destructive, action: viewModel.resetNap) {
-                        Label("Reset", systemImage: "arrow.counterclockwise")
-                    }
-                }
-            case .running:
-                Button(role: .destructive, action: viewModel.stopNap) {
-                    Label("End Early", systemImage: "stop.fill")
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(.red)
-
-                Text("Digital Crown adjusts max nap length")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-            case .analyzing:
-                ProgressView("Analyzing sleep data…")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-            }
-        }
-    }
-
-    private func metricCard(title: String, value: String) -> some View {
-        VStack(spacing: 2) {
-            Text(title.uppercased())
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-            Text(value)
+            Text("Time Left")
                 .font(.caption)
-                .monospacedDigit()
+                .foregroundStyle(.secondary)
         }
-        .frame(maxWidth: .infinity)
-        .padding(6)
-        .background(Color.white.opacity(0.08))
-        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 
-    private var subtitleText: String {
-        switch viewModel.state {
-        case .idle:
-            return "Set your max nap length with the Crown"
-        case .running:
-            return "Relax – we'll nudge you at the ideal moment"
-        case .analyzing:
-            return "Reviewing your health metrics"
-        case .completed:
-            return "Nap insights ready"
+    private var dataCollectionIndicator: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "waveform.circle.fill")
+                .font(.system(size: 12))
+                .foregroundStyle(.mint)
+
+            Text("Collecting biometric data")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            Spacer()
         }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(Color.mint.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+
+    private var biometricDataView: some View {
+        VStack(spacing: 8) {
+            Text("Biometric Data")
+                .font(.headline)
+                .foregroundStyle(.primary)
+
+            VStack(spacing: 8) {
+                // Heart Rate Panel
+                biometricPanel(
+                    icon: "heart.fill",
+                    title: "Heart Rate",
+                    value: "\(heartRate)",
+                    unit: "BPM",
+                    color: .red
+                )
+                
+                // Oxygen Saturation Panel
+                biometricPanel(
+                    icon: "o2.circle.fill",
+                    title: "Oxygen Saturation",
+                    value: "\(oxygenSaturation)",
+                    unit: "%",
+                    color: .cyan
+                )
+                
+                // Respiration Rate Panel
+                biometricPanel(
+                    icon: "lungs.fill",
+                    title: "Respiration Rate",
+                    value: String(format: "%.1f", respirationRate),
+                    unit: "breaths/min",
+                    color: .green
+                )
+                
+                // HRV Score Panel
+                biometricPanel(
+                    icon: "waveform.path.ecg",
+                    title: "HRV Score",
+                    value: "\(hrvScore)",
+                    unit: "ms",
+                    color: .blue
+                )
+            }
+        }
+    }
+    
+    private func biometricPanel(icon: String, title: String, value: String, unit: String, color: Color) -> some View {
+        HStack(spacing: 12) {
+            // Icon
+            Image(systemName: icon)
+                .font(.system(size: 16))
+                .foregroundStyle(color)
+                .frame(width: 20)
+            
+            // Title and Value
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                
+                HStack(alignment: .firstTextBaseline, spacing: 4) {
+                    Text(value)
+                        .font(.callout)
+                        .fontWeight(.semibold)
+                        .monospacedDigit()
+                        .foregroundStyle(.primary)
+                    
+                    Text(unit)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            
+            Spacer()
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .background(Color.gray.opacity(0.2))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+
+    private func formatTime(_ timeInterval: TimeInterval) -> String {
+        let minutes = Int(timeInterval) / 60
+        let seconds = Int(timeInterval) % 60
+        return String(format: "%d:%02d", minutes, seconds)
+    }
+
+    private func startTimer() {
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            if remainingTime > 0 {
+                remainingTime -= 1
+            } else {
+                stopTimer()
+            }
+        }
+    }
+
+    private func stopTimer() {
+        timer?.invalidate()
+        timer = nil
+    }
+    
+    private func startBiometricTimer() {
+        biometricTimer?.invalidate()
+        biometricTimer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { _ in
+            // Update biometric data with very small realistic fluctuations
+            heartRate += Int.random(in: -2...2)
+            heartRate = max(60, min(75, heartRate)) // Keep within realistic range
+            
+            oxygenSaturation += Int.random(in: -1...1)
+            oxygenSaturation = max(96, min(100, oxygenSaturation))
+            
+            respirationRate += Double.random(in: -0.5...0.5)
+            respirationRate = max(12.0, min(16.0, respirationRate))
+            
+            hrvScore += Int.random(in: -3...3)
+            hrvScore = max(45, min(70, hrvScore))
+        }
+    }
+
+    private func stopBiometricTimer() {
+        biometricTimer?.invalidate()
+        biometricTimer = nil
     }
 }
 
