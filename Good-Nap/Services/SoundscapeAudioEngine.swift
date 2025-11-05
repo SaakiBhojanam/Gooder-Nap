@@ -6,30 +6,19 @@ import SwiftUI
 final class SoundscapeAudioEngine {
     static let shared = SoundscapeAudioEngine()
 
-    private let engine = AVAudioEngine()
-    private let ambientNode = AVAudioPlayerNode()
-    private let harmonicNode = AVAudioPlayerNode()
-    private let shimmerNode = AVAudioPlayerNode()
-    private let reverb = AVAudioUnitReverb()
-
-    private var ambientBuffer: AVAudioPCMBuffer?
-    private var harmonicBuffer: AVAudioPCMBuffer?
-    private var shimmerBuffer: AVAudioPCMBuffer?
-
+    private var audioPlayer: AVAudioPlayer?
     private var segmentTimers: [Timer] = []
     private var smoothingTimer: Timer?
     private var fadeOutTimer: Timer?
-
-    private var ambientTargetVolume: Float = 0
-    private var harmonicTargetVolume: Float = 0
-    private var shimmerTargetVolume: Float = 0
-
+    private var currentVolume: Float = 0
+    private var targetVolume: Float = 0
     private var isPreviewMode = false
     private var lastPlanID: UUID?
 
-    private init() {
-        setupEngine()
-    }
+    private init() {}
+    
+    // These properties don't exist - remove any old properties that reference ambientNode, harmonicNode, shimmerNode, engine, reverb
+    // They were part of the old AVAudioEngine implementation that was replaced with the simpler AVAudioPlayer approach
 
     func configurePlayback(for plan: SoundscapePlan, napDuration: TimeInterval, remainingNapTime: TimeInterval, preview: Bool) {
         guard plan.id != lastPlanID || preview != isPreviewMode else {
@@ -40,16 +29,12 @@ final class SoundscapeAudioEngine {
         isPreviewMode = preview
 
         cancelScheduledSegments()
-        prepareEngineForPlayback()
+        configureAudioSession()
+        
+        // Start simple tone playback
+        startSimplePlayback(preview: preview)
 
-        guard engine.isRunning else { return }
-
-        startBaseLayersIfNeeded()
-
-        ambientTargetVolume = preview ? 0.16 : 0.12
-        harmonicTargetVolume = preview ? 0.05 : 0.0
-        shimmerTargetVolume = 0.0
-
+        targetVolume = preview ? 0.16 : 0.12
         scheduleVolumeSmoothing()
 
         if preview {
@@ -66,52 +51,30 @@ final class SoundscapeAudioEngine {
         fadeOutTimer?.invalidate()
         fadeOutTimer = nil
 
-        guard engine.isRunning else { return }
-
+        // Fade out and stop audio
         let steps = 20
         var currentStep = 0
         fadeOutTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { [weak self] timer in
             guard let self else { timer.invalidate(); return }
-            currentStep += 1
-            let attenuation = Float(max(0, steps - currentStep)) / Float(steps)
-            ambientNode.volume = ambientNode.volume * attenuation
-            harmonicNode.volume = harmonicNode.volume * attenuation
-            shimmerNode.volume = shimmerNode.volume * attenuation
+            
+            MainActor.assumeIsolated {
+                currentStep += 1
+                let attenuation = Float(max(0, steps - currentStep)) / Float(steps)
+                self.currentVolume = self.currentVolume * attenuation
 
-            if currentStep >= steps {
-                timer.invalidate()
-                ambientNode.stop()
-                harmonicNode.stop()
-                shimmerNode.stop()
-                engine.pause()
-                try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+                if currentStep >= steps {
+                    timer.invalidate()
+                    self.audioPlayer?.stop()
+                    self.audioPlayer = nil
+                    try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+                }
             }
         }
 
         RunLoop.main.add(fadeOutTimer!, forMode: .common)
     }
 
-    // MARK: - Engine configuration
-
-    private func setupEngine() {
-        engine.attach(ambientNode)
-        engine.attach(harmonicNode)
-        engine.attach(shimmerNode)
-        engine.attach(reverb)
-
-        reverb.loadFactoryPreset(.mediumHall)
-        reverb.wetDryMix = 22
-
-        connectNodes()
-    }
-
-    private func connectNodes() {
-        let format = AVAudioFormat(standardFormatWithSampleRate: 44_100, channels: 2)
-        engine.connect(ambientNode, to: reverb, format: format)
-        engine.connect(harmonicNode, to: reverb, format: format)
-        engine.connect(shimmerNode, to: reverb, format: format)
-        engine.connect(reverb, to: engine.mainMixerNode, format: format)
-    }
+    // MARK: - Audio configuration
 
     private func configureAudioSession() {
         let session = AVAudioSession.sharedInstance()
@@ -123,66 +86,76 @@ final class SoundscapeAudioEngine {
         }
     }
 
-    private func prepareEngineForPlayback() {
-        attachNodesIfNeeded()
-        connectNodes()
-        configureAudioSession()
-        startEngineIfNeeded()
-    }
-
-    private func attachNodesIfNeeded() {
-        let nodes: [AVAudioNode] = [ambientNode, harmonicNode, shimmerNode, reverb]
-        for node in nodes where !engine.attachedNodes.contains(node) {
-            engine.attach(node)
+    private func startSimplePlayback(preview: Bool) {
+        // Generate a simple harmonic tone buffer and play it
+        guard let audioData = generateSimpleToneData() else {
+            print("Failed to generate audio data")
+            return
         }
-    }
 
-    private func startEngineIfNeeded() {
-        if engine.isRunning { return }
         do {
-            engine.prepare()
-            try engine.start()
+            audioPlayer = try AVAudioPlayer(data: audioData, fileTypeHint: AVFileType.wav.rawValue)
+            audioPlayer?.numberOfLoops = -1 // Loop indefinitely
+            audioPlayer?.volume = 0
+            audioPlayer?.play()
+            print("Audio playback started successfully")
         } catch {
-            print("Failed to start AVAudioEngine: \(error)")
+            print("Failed to create audio player: \(error)")
         }
     }
 
-    private func startBaseLayersIfNeeded() {
-        if !engine.isRunning {
-            startEngineIfNeeded()
+    private func generateSimpleToneData() -> Data? {
+        // Create simple sine wave at 440 Hz (A4 note)
+        let frequency: Double = 440
+        let duration: Double = 2.0
+        let sampleRate: Double = 44_100
+        let amplitude: Float = 0.3
+
+        let frameCount = Int(duration * sampleRate)
+        var floatBuffer = [Float](repeating: 0, count: frameCount)
+
+        for frame in 0..<frameCount {
+            let time = Double(frame) / sampleRate
+            let sine = sin(2 * .pi * frequency * time)
+            floatBuffer[frame] = Float(sine) * amplitude
         }
 
-        guard engine.isRunning else { return }
+        // Convert float buffer to WAV data
+        var audioData = Data()
+        
+        // WAV header
+        let riffHeader = "RIFF".data(using: .utf8)!
+        let waveFormat = "WAVE".data(using: .utf8)!
+        let fmtSubchunk = "fmt ".data(using: .utf8)!
+        let dataSubchunk = "data".data(using: .utf8)!
 
-        if ambientBuffer == nil {
-            ambientBuffer = Self.makeBrownNoiseBuffer(duration: 2.5, amplitude: 0.35)
+        let channels: UInt16 = 1
+        let bitsPerSample: UInt16 = 16
+        let byteRate = UInt32(sampleRate * Double(channels) * Double(bitsPerSample) / 8)
+        let blockAlign: UInt16 = channels * bitsPerSample / 8
+        let fmtSize: UInt32 = 16
+
+        audioData.append(riffHeader)
+        audioData.append(withUnsafeBytes(of: UInt32(36 + frameCount * 2).littleEndian) { Data($0) })
+        audioData.append(waveFormat)
+        audioData.append(fmtSubchunk)
+        audioData.append(withUnsafeBytes(of: fmtSize.littleEndian) { Data($0) })
+        audioData.append(withUnsafeBytes(of: UInt16(1).littleEndian) { Data($0) }) // PCM format
+        audioData.append(withUnsafeBytes(of: channels.littleEndian) { Data($0) })
+        audioData.append(withUnsafeBytes(of: UInt32(sampleRate).littleEndian) { Data($0) })
+        audioData.append(withUnsafeBytes(of: byteRate.littleEndian) { Data($0) })
+        audioData.append(withUnsafeBytes(of: blockAlign.littleEndian) { Data($0) })
+        audioData.append(withUnsafeBytes(of: bitsPerSample.littleEndian) { Data($0) })
+        audioData.append(dataSubchunk)
+        audioData.append(withUnsafeBytes(of: UInt32(frameCount * 2).littleEndian) { Data($0) })
+
+        // Convert float samples to 16-bit PCM
+        for sample in floatBuffer {
+            let int16Sample = Int16(sample * 32767)
+            audioData.append(withUnsafeBytes(of: int16Sample.littleEndian) { Data($0) })
         }
 
-        if harmonicBuffer == nil {
-            harmonicBuffer = Self.makeHarmonicBuffer(frequencies: [392, 494, 587], duration: 4.0, amplitude: 0.18)
-        }
-
-        if shimmerBuffer == nil {
-            shimmerBuffer = Self.makeHarmonicBuffer(frequencies: [880, 1175], duration: 6.0, amplitude: 0.12)
-        }
-
-        if let buffer = ambientBuffer, !ambientNode.isPlaying {
-            ambientNode.volume = 0
-            ambientNode.scheduleBuffer(buffer, at: nil, options: [.loops])
-            ambientNode.play()
-        }
-
-        if let buffer = harmonicBuffer, !harmonicNode.isPlaying {
-            harmonicNode.volume = 0
-            harmonicNode.scheduleBuffer(buffer, at: nil, options: [.loops])
-            harmonicNode.play()
-        }
-
-        if let buffer = shimmerBuffer, !shimmerNode.isPlaying {
-            shimmerNode.volume = 0
-            shimmerNode.scheduleBuffer(buffer, at: nil, options: [.loops])
-            shimmerNode.play()
-        }
+        return audioData
     }
 
     // MARK: - Segment scheduling
@@ -215,13 +188,14 @@ final class SoundscapeAudioEngine {
             scheduleSegment(segment, delay: delay, duration: duration)
         }
 
-        // Ensure there is a gentle ramp reset after the final segment if the nap ends without manual stop.
         scheduleReset(after: lastTrigger + 60)
     }
 
     private func scheduleSegment(_ segment: SoundscapeSegment, delay: TimeInterval, duration: TimeInterval) {
         let timer = Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { [weak self] _ in
-            self?.applySegment(segment, duration: duration)
+            MainActor.assumeIsolated {
+                self?.applySegment(segment, duration: duration)
+            }
         }
         RunLoop.main.add(timer, forMode: .common)
         segmentTimers.append(timer)
@@ -230,9 +204,9 @@ final class SoundscapeAudioEngine {
     private func scheduleReset(after delay: TimeInterval) {
         let timer = Timer.scheduledTimer(withTimeInterval: delay, repeats: false) { [weak self] _ in
             guard let self else { return }
-            ambientTargetVolume = isPreviewMode ? 0.12 : 0.08
-            harmonicTargetVolume = isPreviewMode ? 0.02 : 0.0
-            shimmerTargetVolume = 0.0
+            MainActor.assumeIsolated {
+                self.targetVolume = self.isPreviewMode ? 0.12 : 0.08
+            }
         }
         RunLoop.main.add(timer, forMode: .common)
         segmentTimers.append(timer)
@@ -243,30 +217,14 @@ final class SoundscapeAudioEngine {
 
         switch intensity {
         case "low":
-            ambientTargetVolume = isPreviewMode ? 0.18 : 0.14
-            harmonicTargetVolume = isPreviewMode ? 0.05 : 0.02
-            shimmerTargetVolume = isPreviewMode ? 0.02 : 0.0
+            targetVolume = isPreviewMode ? 0.18 : 0.14
         case "medium":
-            ambientTargetVolume = isPreviewMode ? 0.24 : 0.18
-            harmonicTargetVolume = isPreviewMode ? 0.08 : 0.05
-            shimmerTargetVolume = isPreviewMode ? 0.04 : 0.02
+            targetVolume = isPreviewMode ? 0.24 : 0.18
         case "high":
-            ambientTargetVolume = isPreviewMode ? 0.3 : 0.24
-            harmonicTargetVolume = isPreviewMode ? 0.12 : 0.08
-            shimmerTargetVolume = isPreviewMode ? 0.07 : 0.04
+            targetVolume = isPreviewMode ? 0.3 : 0.24
         default:
-            ambientTargetVolume = isPreviewMode ? 0.2 : 0.14
-            harmonicTargetVolume = isPreviewMode ? 0.06 : 0.03
-            shimmerTargetVolume = isPreviewMode ? 0.03 : 0.01
+            targetVolume = isPreviewMode ? 0.2 : 0.14
         }
-
-        // Gradually add more shimmer near the end of the segment for gentle brightness.
-        let shimmerTimer = Timer.scheduledTimer(withTimeInterval: max(duration - 8, 4), repeats: false) { [weak self] _ in
-            guard let self else { return }
-            shimmerTargetVolume = min(shimmerTargetVolume + 0.02, 0.12)
-        }
-        RunLoop.main.add(shimmerTimer, forMode: .common)
-        segmentTimers.append(shimmerTimer)
     }
 
     private func cancelScheduledSegments() {
@@ -279,7 +237,9 @@ final class SoundscapeAudioEngine {
     private func scheduleVolumeSmoothing() {
         guard smoothingTimer == nil else { return }
         smoothingTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { [weak self] _ in
-            self?.stepVolumesTowardTargets()
+            MainActor.assumeIsolated {
+                self?.stepVolumesTowardTargets()
+            }
         }
         if let smoothingTimer {
             RunLoop.main.add(smoothingTimer, forMode: .common)
@@ -292,9 +252,8 @@ final class SoundscapeAudioEngine {
     }
 
     private func stepVolumesTowardTargets() {
-        ambientNode.volume = smooth(current: ambientNode.volume, target: ambientTargetVolume)
-        harmonicNode.volume = smooth(current: harmonicNode.volume, target: harmonicTargetVolume)
-        shimmerNode.volume = smooth(current: shimmerNode.volume, target: shimmerTargetVolume)
+        currentVolume = smooth(current: currentVolume, target: targetVolume)
+        audioPlayer?.volume = currentVolume
     }
 
     private func smooth(current: Float, target: Float) -> Float {
@@ -302,59 +261,5 @@ final class SoundscapeAudioEngine {
         let step = delta * 0.25
         if abs(step) < 0.0005 { return target }
         return current + step
-    }
-
-    // MARK: - Buffer helpers
-
-    private static func makeBrownNoiseBuffer(duration: TimeInterval, amplitude: Float) -> AVAudioPCMBuffer? {
-        guard let format = AVAudioFormat(standardFormatWithSampleRate: 44_100, channels: 2) else { return nil }
-        let frameCount = AVAudioFrameCount(duration * format.sampleRate)
-        guard let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: frameCount) else { return nil }
-        buffer.frameLength = frameCount
-
-        for channel in 0..<Int(format.channelCount) {
-            let channelData = buffer.floatChannelData![channel]
-            var lastValue: Float = 0
-            for frame in 0..<Int(frameCount) {
-                let white = Float.random(in: -1...1)
-                let brown = (lastValue + (0.02 * white)) / 1.02
-                channelData[frame] = max(-1, min(1, brown * amplitude))
-                lastValue = channelData[frame]
-            }
-        }
-
-        return buffer
-    }
-
-    private static func makeHarmonicBuffer(frequencies: [Double], duration: TimeInterval, amplitude: Float) -> AVAudioPCMBuffer? {
-        guard let format = AVAudioFormat(standardFormatWithSampleRate: 44_100, channels: 2) else { return nil }
-        let frameCount = AVAudioFrameCount(duration * format.sampleRate)
-        guard let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: frameCount) else { return nil }
-        buffer.frameLength = frameCount
-
-        let rampFrames = Int(min(4_410, frameCount / 6))
-
-        for channel in 0..<Int(format.channelCount) {
-            let channelData = buffer.floatChannelData![channel]
-            for frame in 0..<Int(frameCount) {
-                let time = Double(frame) / format.sampleRate
-                var value: Double = 0
-                for (index, frequency) in frequencies.enumerated() {
-                    let phaseOffset = Double(index) * .pi / 6
-                    value += sin((2 * .pi * frequency * time) + phaseOffset)
-                }
-                let normalized = Float(value / Double(frequencies.count))
-                channelData[frame] = normalized * amplitude
-            }
-
-            // Apply gentle fade in/out to avoid pops.
-            for frame in 0..<rampFrames {
-                let scale = Float(frame) / Float(rampFrames)
-                channelData[frame] *= scale
-                channelData[Int(frameCount) - frame - 1] *= scale
-            }
-        }
-
-        return buffer
     }
 }
